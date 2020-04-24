@@ -1,11 +1,15 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
-	"github.com/line/line-bot-sdk-go/linebot"
 	"log"
 	"net/http"
 	"os"
+	"wolfbot/domain/model"
+	"wolfbot/handler"
+	"wolfbot/initializer"
+
+	"github.com/joho/godotenv"
+	"github.com/line/line-bot-sdk-go/linebot"
 )
 
 func main() {
@@ -18,6 +22,11 @@ func main() {
 	channelSecret := mustGetenv("CHANNEL_SECRET")
 	channelAccessToken := mustGetenv("CHANNEL_ACCESS_TOKEN")
 	port := mustGetenv("PORT")
+	dbURL := mustGetenv("DATABASE_URL")
+
+	_, service := initializer.Initialize(dbURL)
+
+	messageHandler := handler.NewMessageHandler(service.VillageService)
 
 	bot, err := linebot.New(channelSecret, channelAccessToken)
 	if err != nil {
@@ -39,12 +48,21 @@ func main() {
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
+					reply, err := messageHandler.HandleGroupMessage(
+						message.Text,
+						model.UserID(event.Source.UserID),
+						model.GroupID(event.Source.GroupID),
+					)
+					if err != nil {
+						log.Println(err)
+					}
+
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage(message.Text),
-						).
+						linebot.NewTextMessage(reply),
+					).
 						Do(); err != nil {
-							log.Print(err)
+						log.Print(err)
 					}
 				}
 			}
@@ -59,7 +77,7 @@ func main() {
 func mustGetenv(key string) string {
 	val := os.Getenv(key)
 	if val == "" {
-		log.Fatal("failed to read environment variable: "+ key)
+		log.Fatal("failed to read environment variable: " + key)
 	}
 	return val
 }
