@@ -1,0 +1,4 @@
+.env.local
+wolfbot
+.idea/
+go.sum
