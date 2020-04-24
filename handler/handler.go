@@ -29,6 +29,13 @@ func (h MessageHandler) HandleGroupMessage(
 	case actionNone:
 		return "", nil
 
+	case actionCheckGroupState:
+		output, err := h.villageService.CheckStatus(groupID)
+		if err != nil {
+			return "", err
+		}
+		return output.StringForHuman(), nil
+
 	case actionCreateVillage:
 		if err := h.villageService.Create(groupID); err != nil {
 			return "", err
@@ -51,24 +58,26 @@ func parseGroupMessage(
 	groupID model.GroupID,
 ) command {
 	replacedMsg := strings.ReplaceAll(message, "＠", "@")
+
+	if replacedMsg == "@" {
+		return command{
+			Action:  actionCheckGroupState,
+			Target:  "",
+			UserID:  userID,
+			GroupID: groupID,
+		}
+	}
+
 	splitMsg := strings.Split(replacedMsg, "@")
 
-	switch len(splitMsg) {
-	case 1:
-		return newGroupCommand(
-			splitMsg[0],
-			"",
-			userID,
-			groupID,
-		)
-	case 2:
-		return newGroupCommand(
-			splitMsg[1],
-			splitMsg[0],
-			userID,
-			groupID,
-		)
-	default:
+	if len(splitMsg) != 2 {
 		return newActionNoneCommand()
 	}
+
+	return newGroupCommand(
+		splitMsg[1],
+		splitMsg[0],
+		userID,
+		groupID,
+	)
 }

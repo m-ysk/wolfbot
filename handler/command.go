@@ -46,9 +46,10 @@ func newActionNoneCommand() command {
 type action string
 
 const (
-	actionNone          action = "None"
-	actionCreateVillage action = "CreateVillage"
-	actionDeleteVillage action = "DeleteVillage"
+	actionNone            action = "None"
+	actionCheckGroupState action = "CheckGroupState"
+	actionCreateVillage   action = "CreateVillage"
+	actionDeleteVillage   action = "DeleteVillage"
 )
 
 var groupActionMap = map[string]action{

@@ -3,6 +3,7 @@ package service
 import (
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
+	"wolfbot/domain/output"
 )
 
 type VillageService struct {
@@ -15,6 +16,27 @@ func NewVillageService(
 	return VillageService{
 		villageRepository: villageRepository,
 	}
+}
+
+func (s VillageService) CheckStatus(
+	id model.GroupID,
+) (output.VillageCheckStatus, error) {
+	village, err := s.villageRepository.FindByID(id)
+	if err != nil {
+		if model.IsVillageNotFound(err) {
+			return output.VillageCheckStatus{
+				VillageNotExist: true,
+				Status:          "",
+			}, nil
+		}
+
+		return output.VillageCheckStatus{}, err
+	}
+
+	return output.VillageCheckStatus{
+		VillageNotExist: false,
+		Status:          village.Status,
+	}, nil
 }
 
 func (s VillageService) Create(id model.GroupID) error {
