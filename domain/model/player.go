@@ -1,3 +1,57 @@
 package model
 
-type UserID string
+import (
+	"wolfbot/domain/model/lifestatus"
+	"wolfbot/domain/model/role"
+	"wolfbot/lib/unixtime"
+)
+
+type Player struct {
+	ID         PlayerID
+	VillageID  VillageID
+	Name       PlayerName
+	LifeStatus lifestatus.LifeStatus
+	Role       role.Role
+	CreatedAt  unixtime.UnixTime
+	UpdatedAt  unixtime.UnixTime
+}
+
+func NewPlayer(
+	id PlayerID,
+	villageID VillageID,
+	name PlayerName,
+) Player {
+	return Player{
+		ID:         id,
+		VillageID:  villageID,
+		Name:       name,
+		LifeStatus: lifestatus.Alive,
+		Role:       role.Unassigned,
+		CreatedAt:  unixtime.Now(),
+		UpdatedAt:  unixtime.Now(),
+	}
+}
+
+type PlayerID string
+
+func (id PlayerID) String() string {
+	return string(id)
+}
+
+type PlayerName string
+
+func NewPlayerName(name string) (PlayerName, error) {
+	return PlayerName(name), nil
+}
+
+func MustPlayerName(name string) PlayerName {
+	n, err := NewPlayerName(name)
+	if err != nil {
+		panic(err)
+	}
+	return n
+}
+
+func (n PlayerName) String() string {
+	return string(n)
+}

@@ -10,8 +10,8 @@ import (
 func Test_parseGroupMessage(t *testing.T) {
 	tests := []struct {
 		message string
-		userID  model.UserID
-		groupID model.GroupID
+		userID  model.PlayerID
+		groupID model.VillageID
 		want    command
 	}{
 		{

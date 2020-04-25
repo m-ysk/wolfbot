@@ -1,27 +1,18 @@
 package model
 
 import (
-	"errors"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/lib/unixtime"
 )
 
 type Village struct {
-	ID        GroupID
+	ID        VillageID
 	Status    gamestatus.GameStatus
 	CreatedAt unixtime.UnixTime
 	UpdatedAt unixtime.UnixTime
 }
 
-var (
-	ErrorVillageNotFound = errors.New("village_not_found")
-)
-
-func IsVillageNotFound(err error) bool {
-	return err == ErrorVillageNotFound
-}
-
-func NewVillage(id GroupID) Village {
+func NewVillage(id VillageID) Village {
 	return Village{
 		ID:        id,
 		Status:    gamestatus.RecruitingPlayers,
@@ -30,9 +21,9 @@ func NewVillage(id GroupID) Village {
 	}
 }
 
-type GroupID string
+type VillageID string
 
-func (id GroupID) String() string {
+func (id VillageID) String() string {
 	return string(id)
 }
 

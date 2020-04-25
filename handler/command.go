@@ -8,8 +8,8 @@ import (
 type command struct {
 	Action  action
 	Target  string
-	UserID  model.UserID
-	GroupID model.GroupID
+	UserID  model.PlayerID
+	GroupID model.VillageID
 }
 
 var (
@@ -19,8 +19,8 @@ var (
 func newGroupCommand(
 	action string,
 	target string,
-	userID model.UserID,
-	groupID model.GroupID,
+	userID model.PlayerID,
+	groupID model.VillageID,
 ) command {
 	if v, ok := groupActionMap[action]; ok {
 		return command{

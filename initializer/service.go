@@ -7,7 +7,10 @@ type Service struct {
 }
 
 func InitService(infra Infra) Service {
-	villageService := service.NewVillageService(infra.VillageRepository)
+	villageService := service.NewVillageService(
+		infra.VillageRepository,
+		infra.PlayerRepository,
+	)
 
 	return Service{
 		VillageService: villageService,

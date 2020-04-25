@@ -20,33 +20,23 @@ func NewMessageHandler(
 
 func (h MessageHandler) HandleGroupMessage(
 	message string,
-	userID model.UserID,
-	groupID model.GroupID,
-) (string, error) {
+	userID model.PlayerID,
+	groupID model.VillageID,
+) (Output, error) {
 	command := parseGroupMessage(message, userID, groupID)
 
 	switch command.Action {
 	case actionNone:
-		return "", nil
+		return NoReplyOutput{}, nil
 
 	case actionCheckGroupState:
-		output, err := h.villageService.CheckStatus(groupID)
-		if err != nil {
-			return "", err
-		}
-		return output.StringForHuman(), nil
+		return h.villageService.CheckStatus(groupID)
 
 	case actionCreateVillage:
-		if err := h.villageService.Create(groupID); err != nil {
-			return "", err
-		}
-		return "村を作成しました", nil
+		return h.villageService.Create(groupID)
 
 	case actionDeleteVillage:
-		if err := h.villageService.Delete(groupID); err != nil {
-			return "", err
-		}
-		return "村を削除しました", nil
+		return h.villageService.Delete(groupID)
 	}
 
 	panic("unreachable")
@@ -54,8 +44,8 @@ func (h MessageHandler) HandleGroupMessage(
 
 func parseGroupMessage(
 	message string,
-	userID model.UserID,
-	groupID model.GroupID,
+	userID model.PlayerID,
+	groupID model.VillageID,
 ) command {
 	replacedMsg := strings.ReplaceAll(message, "＠", "@")
 
@@ -80,4 +70,14 @@ func parseGroupMessage(
 		userID,
 		groupID,
 	)
+}
+
+type Output interface {
+	Reply() string
+}
+
+type NoReplyOutput struct{}
+
+func (o NoReplyOutput) Reply() string {
+	return ""
 }

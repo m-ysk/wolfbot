@@ -1,6 +1,7 @@
 package rdb
 
 import (
+	"errors"
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
 
@@ -25,7 +26,7 @@ func (r villageRepository) Create(village model.Village) error {
 	return nil
 }
 
-func (r villageRepository) Delete(id model.GroupID) error {
+func (r villageRepository) Delete(id model.VillageID) error {
 	if err := r.db.Delete(&Village{
 		ID: id.String(),
 	}).Error; err != nil {
@@ -35,7 +36,7 @@ func (r villageRepository) Delete(id model.GroupID) error {
 }
 
 func (r villageRepository) FindByID(
-	id model.GroupID,
+	id model.VillageID,
 ) (model.Village, error) {
 	var v Village
 
@@ -43,7 +44,9 @@ func (r villageRepository) FindByID(
 		ID: id.String(),
 	}).First(&v)
 	if result.RecordNotFound() {
-		return model.Village{}, model.ErrorVillageNotFound
+		return model.Village{}, NewErrorNotFound(
+			errors.New("village not found: id: " + id.String()),
+		)
 	}
 	if err := result.Error; err != nil {
 		return model.Village{}, err

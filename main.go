@@ -48,21 +48,41 @@ func main() {
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					reply, err := messageHandler.HandleGroupMessage(
+					output, err := messageHandler.HandleGroupMessage(
 						message.Text,
-						model.UserID(event.Source.UserID),
-						model.GroupID(event.Source.GroupID),
+						model.PlayerID(event.Source.UserID),
+						model.VillageID(event.Source.GroupID),
 					)
 					if err != nil {
 						log.Println(err)
+
+						// 特別なエラーメッセージが設定されている場合にはそれを返して終了
+						if e, ok := err.(Replyer); ok {
+							if _, err := bot.ReplyMessage(
+								event.ReplyToken,
+								linebot.NewTextMessage(e.Reply()),
+							).Do(); err != nil {
+								log.Println(err)
+							}
+							continue
+						}
+
+						// 特別なエラーメッセージが設定されていない場合にはエラー発生の旨のみ通知して終了
+						if _, err := bot.ReplyMessage(
+							event.ReplyToken,
+							linebot.NewTextMessage("エラーが発生しました"),
+						).Do(); err != nil {
+							log.Println(err)
+						}
+						continue
 					}
 
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage(reply),
+						linebot.NewTextMessage(output.Reply()),
 					).
 						Do(); err != nil {
-						log.Print(err)
+						log.Println(err)
 					}
 				}
 			}
@@ -80,4 +100,8 @@ func mustGetenv(key string) string {
 		log.Fatal("failed to read environment variable: " + key)
 	}
 	return val
+}
+
+type Replyer interface {
+	Reply() string
 }

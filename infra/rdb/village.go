@@ -29,7 +29,7 @@ func (v Village) Model() (model.Village, error) {
 	}
 
 	return model.Village{
-		ID:        model.GroupID(v.ID),
+		ID:        model.VillageID(v.ID),
 		Status:    gameStatus,
 		CreatedAt: unixtime.UnixTime(v.CreatedAt),
 		UpdatedAt: unixtime.UnixTime(v.UpdatedAt),
