@@ -27,6 +27,14 @@ func New(str string) (GameStatus, error) {
 	return "", ErrorInvalidGameStatus
 }
 
+func Must(str string) GameStatus {
+	v, err := New(str)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func (s GameStatus) String() string {
 	return string(s)
 }

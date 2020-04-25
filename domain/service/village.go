@@ -36,16 +36,21 @@ func (s VillageService) CheckStatus(
 		if model.IsErrorNotFound(err) {
 			return output.VillageCheckStatus{
 				VillageNotExist: true,
-				Status:          "",
 			}, nil
 		}
 
 		return output.VillageCheckStatus{}, err
 	}
 
+	players, err := s.playerRepository.FindByVillageID(id)
+	if err != nil {
+		return output.VillageCheckStatus{}, err
+	}
+
 	return output.VillageCheckStatus{
 		VillageNotExist: false,
-		Status:          village.Status,
+		Village:         village,
+		Players:         players,
 	}, nil
 }
 
@@ -122,5 +127,7 @@ func (s VillageService) AddPlayer(
 		return output.VillageAddPlayer{}, err
 	}
 
-	return output.VillageAddPlayer{}, nil
+	return output.VillageAddPlayer{
+		PlayerName: playerName,
+	}, nil
 }

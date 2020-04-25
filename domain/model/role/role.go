@@ -33,6 +33,14 @@ func New(str string) (Role, error) {
 	return "", ErrorInvalidRole
 }
 
+func Must(str string) Role {
+	v, err := New(str)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func (r Role) String() string {
 	return string(r)
 }

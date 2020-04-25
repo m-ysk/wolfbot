@@ -29,24 +29,24 @@ func NewPlayer(player model.Player) Player {
 	}
 }
 
-func (p Player) Model() (model.Player, error) {
-	lifeStatus, err := lifestatus.New(p.LifeStatus)
-	if err != nil {
-		return model.Player{}, err
-	}
-
-	roleVal, err := role.New(p.Role)
-	if err != nil {
-		return model.Player{}, err
-	}
-
+func (p Player) MustModel() model.Player {
 	return model.Player{
 		ID:         model.PlayerID(p.ID),
 		VillageID:  model.VillageID(p.VillageID),
 		Name:       model.PlayerName(p.Name),
-		LifeStatus: lifeStatus,
-		Role:       roleVal,
+		LifeStatus: lifestatus.Must(p.LifeStatus),
+		Role:       role.Must(p.Role),
 		CreatedAt:  unixtime.UnixTime(p.CreatedAt),
 		UpdatedAt:  unixtime.UnixTime(p.UpdatedAt),
-	}, nil
+	}
+}
+
+type Players []Player
+
+func (ps Players) MustModel() model.Players {
+	var result model.Players
+	for _, v := range ps {
+		result = append(result, v.MustModel())
+	}
+	return result
 }

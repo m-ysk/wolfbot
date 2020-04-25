@@ -30,6 +30,14 @@ func New(str string) (LifeStatus, error) {
 	return "", ErrorInvalidLifeStatus
 }
 
+func Must(str string) LifeStatus {
+	v, err := New(str)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func (s LifeStatus) String() string {
 	return string(s)
 }

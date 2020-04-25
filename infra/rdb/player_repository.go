@@ -79,5 +79,17 @@ func (repo playerRepository) FindByID(
 		return model.Player{}, err
 	}
 
-	return p.Model()
+	return p.MustModel(), nil
+}
+
+func (repo playerRepository) FindByVillageID(
+	villageID model.VillageID,
+) (model.Players, error) {
+	var ps Players
+	if err := repo.db.Where(Player{
+		VillageID: villageID.String(),
+	}).Find(&ps).Error; err != nil {
+		return nil, err
+	}
+	return ps.MustModel(), nil
 }

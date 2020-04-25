@@ -32,6 +32,19 @@ func NewPlayer(
 	}
 }
 
+type Players []Player
+
+func (ps Players) NamesForHuman() string {
+	var result string
+	for i, v := range ps {
+		if i != 0 {
+			result += "\n"
+		}
+		result += v.Name.String()
+	}
+	return result
+}
+
 type PlayerID string
 
 func (id PlayerID) String() string {

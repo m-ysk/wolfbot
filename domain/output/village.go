@@ -3,12 +3,12 @@ package output
 import (
 	"fmt"
 	"wolfbot/domain/model"
-	"wolfbot/domain/model/gamestatus"
 )
 
 type VillageCheckStatus struct {
 	VillageNotExist bool
-	Status          gamestatus.GameStatus
+	Village         model.Village
+	Players         model.Players
 }
 
 func (o VillageCheckStatus) Reply() string {
@@ -23,8 +23,12 @@ func (o VillageCheckStatus) Reply() string {
 	}
 
 	return fmt.Sprintf(`○現在の状況
+%v
+
+○参加者
 %v`,
-		o.Status.StringForHuman(),
+		o.Village.Status.StringForHuman(),
+		o.Players.NamesForHuman(),
 	)
 }
 
