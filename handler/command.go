@@ -2,14 +2,11 @@ package handler
 
 import (
 	"errors"
-	"wolfbot/domain/model"
 )
 
 type command struct {
-	Action  action
-	Target  string
-	UserID  model.PlayerID
-	GroupID model.VillageID
+	Action action
+	Target string
 }
 
 var (
@@ -19,15 +16,11 @@ var (
 func newGroupCommand(
 	action string,
 	target string,
-	userID model.PlayerID,
-	groupID model.VillageID,
 ) command {
 	if v, ok := groupActionMap[action]; ok {
 		return command{
-			Action:  v,
-			Target:  target,
-			UserID:  userID,
-			GroupID: groupID,
+			Action: v,
+			Target: target,
 		}
 	}
 
@@ -36,10 +29,8 @@ func newGroupCommand(
 
 func newActionNoneCommand() command {
 	return command{
-		Action:  actionNone,
-		Target:  "",
-		UserID:  "",
-		GroupID: "",
+		Action: actionNone,
+		Target: "",
 	}
 }
 
@@ -50,9 +41,11 @@ const (
 	actionCheckGroupState action = "CheckGroupState"
 	actionCreateVillage   action = "CreateVillage"
 	actionDeleteVillage   action = "DeleteVillage"
+	actionJoinVillage     action = "JoinVillage"
 )
 
 var groupActionMap = map[string]action{
 	"村作成": actionCreateVillage,
 	"村削除": actionDeleteVillage,
+	"参加":  actionJoinVillage,
 }

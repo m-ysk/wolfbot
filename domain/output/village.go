@@ -2,6 +2,7 @@ package output
 
 import (
 	"fmt"
+	"wolfbot/domain/model"
 	"wolfbot/domain/model/gamestatus"
 )
 
@@ -39,4 +40,12 @@ func (o VillageDelete) Reply() string {
 	return "村を削除しました"
 }
 
-type VillageAddPlayer struct{}
+type VillageAddPlayer struct {
+	PlayerName model.PlayerName
+}
+
+func (o VillageAddPlayer) Reply() string {
+	return fmt.Sprintf(`プレイヤー名：%v
+で村に参加しました`,
+		o.PlayerName.String())
+}

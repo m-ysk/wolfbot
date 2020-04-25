@@ -26,7 +26,10 @@ func main() {
 
 	_, service := initializer.Initialize(dbURL)
 
-	messageHandler := handler.NewMessageHandler(service.VillageService)
+	messageHandler := handler.NewMessageHandler(
+		service.VillageService,
+		service.UserPlayerRelationService,
+	)
 
 	bot, err := linebot.New(channelSecret, channelAccessToken)
 	if err != nil {
@@ -50,8 +53,8 @@ func main() {
 				case *linebot.TextMessage:
 					output, err := messageHandler.HandleGroupMessage(
 						message.Text,
-						model.PlayerID(event.Source.UserID),
-						model.VillageID(event.Source.GroupID),
+						model.UserID(event.Source.UserID),
+						event.Source.GroupID,
 					)
 					if err != nil {
 						log.Println(err)

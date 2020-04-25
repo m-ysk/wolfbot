@@ -2,6 +2,7 @@ package rdb
 
 import (
 	"errors"
+	"log"
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
 
@@ -18,29 +19,61 @@ func NewVillageRepository(db *gorm.DB) villageRepository {
 	return villageRepository{db: db}
 }
 
-func (r villageRepository) Create(village model.Village) error {
+func (repo villageRepository) Create(village model.Village) error {
 	v := NewVillage(village)
-	if err := r.db.Create(&v).Error; err != nil {
+	if err := repo.db.Create(&v).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r villageRepository) Delete(id model.VillageID) error {
-	if err := r.db.Delete(&Village{
+func (repo villageRepository) Delete(id model.VillageID) error {
+	tx := repo.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			Rollback(tx)
+		}
+	}()
+
+	if err := tx.Delete(&Village{
 		ID: id.String(),
 	}).Error; err != nil {
+		log.Println(err)
+		Rollback(tx)
 		return err
 	}
+
+	if err := tx.Delete(&Player{
+		VillageID: id.String(),
+	}).Error; err != nil {
+		log.Println(err)
+		Rollback(tx)
+		return err
+	}
+
+	if err := tx.Delete(&UserPlayerRelation{
+		VillageID: id.String(),
+	}).Error; err != nil {
+		log.Println(err)
+		Rollback(tx)
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		log.Println(err)
+		Rollback(tx)
+		return err
+	}
+
 	return nil
 }
 
-func (r villageRepository) FindByID(
+func (repo villageRepository) FindByID(
 	id model.VillageID,
 ) (model.Village, error) {
 	var v Village
 
-	result := r.db.Where(&Village{
+	result := repo.db.Where(&Village{
 		ID: id.String(),
 	}).First(&v)
 	if result.RecordNotFound() {

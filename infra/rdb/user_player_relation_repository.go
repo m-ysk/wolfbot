@@ -27,25 +27,25 @@ func (repo userPlayerRelationRepository) Create(relation model.UserPlayerRelatio
 	return nil
 }
 
-func (repo userPlayerRelationRepository) Delete(userID model.UserID, groupID model.GroupID) error {
+func (repo userPlayerRelationRepository) Delete(userID model.UserID, villageID model.VillageID) error {
 	if err := repo.db.Delete(&UserPlayerRelation{
-		UserID:  userID.String(),
-		GroupID: groupID.String(),
+		UserID:    userID.String(),
+		VillageID: villageID.String(),
 	}).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo userPlayerRelationRepository) FindByUserIDAndGroupID(
+func (repo userPlayerRelationRepository) FindByUserIDAndVillageID(
 	userID model.UserID,
-	groupID model.GroupID,
+	villageID model.VillageID,
 ) (model.UserPlayerRelation, error) {
 	var r UserPlayerRelation
 
 	result := repo.db.Where(&UserPlayerRelation{
-		UserID:  userID.String(),
-		GroupID: groupID.String(),
+		UserID:    userID.String(),
+		VillageID: villageID.String(),
 	}).First(&r)
 	if result.RecordNotFound() {
 		return model.UserPlayerRelation{}, NewErrorNotFound(
@@ -53,7 +53,7 @@ func (repo userPlayerRelationRepository) FindByUserIDAndGroupID(
 				fmt.Sprintf(
 					"user_player_relation_not_found: user_id: %v, group_id: %v",
 					userID.String(),
-					groupID.String(),
+					villageID.String(),
 				),
 			),
 		)

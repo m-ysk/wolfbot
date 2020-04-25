@@ -7,7 +7,7 @@ import (
 
 type UserPlayerRelation struct {
 	UserID     string `sql:"primary_key"`
-	GroupID    string `sql:"primary_key"`
+	VillageID  string `sql:"primary_key"`
 	PlayerName string `sql:"not null;default:''"`
 	PlayerID   string `sql:"not null;default:''"`
 	CreatedAt  int64  `sql:"not null;default:0"`
@@ -17,7 +17,7 @@ type UserPlayerRelation struct {
 func NewUserPlayerRelation(relation model.UserPlayerRelation) UserPlayerRelation {
 	return UserPlayerRelation{
 		UserID:     relation.UserID.String(),
-		GroupID:    relation.GroupID.String(),
+		VillageID:  relation.VillageID.String(),
 		PlayerName: relation.PlayerName.String(),
 		PlayerID:   relation.PlayerID.String(),
 		CreatedAt:  relation.CreatedAt.Int64(),
@@ -28,7 +28,7 @@ func NewUserPlayerRelation(relation model.UserPlayerRelation) UserPlayerRelation
 func (r UserPlayerRelation) MustModel() model.UserPlayerRelation {
 	return model.UserPlayerRelation{
 		UserID:     model.UserID(r.UserID),
-		GroupID:    model.GroupID(r.GroupID),
+		VillageID:  model.VillageID(r.VillageID),
 		PlayerName: model.MustPlayerName(r.PlayerName),
 		PlayerID:   model.PlayerID(r.PlayerID),
 		CreatedAt:  unixtime.UnixTime(r.CreatedAt),

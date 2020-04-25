@@ -6,10 +6,10 @@ import (
 
 type UserPlayerRelationRepository interface {
 	Create(relation model.UserPlayerRelation) error
-	Delete(userID model.UserID, groupID model.GroupID) error
-	FindByUserIDAndGroupID(
+	Delete(userID model.UserID, villageID model.VillageID) error
+	FindByUserIDAndVillageID(
 		userID model.UserID,
-		groupID model.GroupID,
+		villageID model.VillageID,
 	) (model.UserPlayerRelation, error)
 	FindByUserID(userID model.UserID) (model.UserPlayerRelations, error)
 }

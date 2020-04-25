@@ -6,11 +6,49 @@ import (
 
 type UserPlayerRelation struct {
 	UserID     UserID
-	GroupID    GroupID
+	VillageID  VillageID
 	PlayerName PlayerName
 	PlayerID   PlayerID
 	CreatedAt  unixtime.UnixTime
 	UpdatedAt  unixtime.UnixTime
 }
 
+func NewUserPlayerRelation(
+	userID UserID,
+	villageID VillageID,
+	playerName PlayerName,
+	playerID PlayerID,
+) UserPlayerRelation {
+	return UserPlayerRelation{
+		UserID:     userID,
+		VillageID:  villageID,
+		PlayerName: playerName,
+		PlayerID:   playerID,
+		CreatedAt:  unixtime.Now(),
+		UpdatedAt:  unixtime.Now(),
+	}
+}
+
 type UserPlayerRelations []UserPlayerRelation
+
+func (rs UserPlayerRelations) FindByVillageID(
+	villageID VillageID,
+) (UserPlayerRelation, bool) {
+	for _, v := range rs {
+		if v.VillageID == villageID {
+			return v, true
+		}
+	}
+	return UserPlayerRelation{}, false
+}
+
+func (rs UserPlayerRelations) FindByPlayerName(
+	name PlayerName,
+) (UserPlayerRelation, bool) {
+	for _, v := range rs {
+		if v.PlayerName == name {
+			return v, true
+		}
+	}
+	return UserPlayerRelation{}, false
+}

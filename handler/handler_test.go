@@ -10,7 +10,7 @@ import (
 func Test_parseGroupMessage(t *testing.T) {
 	tests := []struct {
 		message string
-		userID  model.PlayerID
+		userID  model.UserID
 		groupID model.VillageID
 		want    command
 	}{
@@ -19,10 +19,8 @@ func Test_parseGroupMessage(t *testing.T) {
 			userID:  "user",
 			groupID: "group",
 			want: command{
-				Action:  actionCreateVillage,
-				Target:  "",
-				UserID:  "user",
-				GroupID: "group",
+				Action: actionCreateVillage,
+				Target: "",
 			},
 		},
 		{
@@ -30,16 +28,14 @@ func Test_parseGroupMessage(t *testing.T) {
 			userID:  "user",
 			groupID: "group",
 			want: command{
-				Action:  actionCreateVillage,
-				Target:  "",
-				UserID:  "user",
-				GroupID: "group",
+				Action: actionCreateVillage,
+				Target: "",
 			},
 		},
 	}
 
 	for _, tt := range tests {
-		if got := parseGroupMessage(tt.message, tt.userID, tt.groupID); !cmp.Equal(tt.want, got) {
+		if got := parseGroupMessage(tt.message); !cmp.Equal(tt.want, got) {
 			t.Error(cmp.Diff(tt.want, got))
 		}
 	}

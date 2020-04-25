@@ -7,36 +7,52 @@ import (
 )
 
 type MessageHandler struct {
-	villageService service.VillageService
+	villageService            service.VillageService
+	userPlayerRelationService service.UserPlayerRelationService
 }
 
 func NewMessageHandler(
 	villageService service.VillageService,
+	userPlayerRelationService service.UserPlayerRelationService,
 ) MessageHandler {
 	return MessageHandler{
-		villageService: villageService,
+		villageService:            villageService,
+		userPlayerRelationService: userPlayerRelationService,
 	}
 }
 
 func (h MessageHandler) HandleGroupMessage(
 	message string,
-	userID model.PlayerID,
-	groupID model.VillageID,
+	userID model.UserID,
+	groupID string,
 ) (Output, error) {
-	command := parseGroupMessage(message, userID, groupID)
+	cmd := parseGroupMessage(message)
 
-	switch command.Action {
+	villageID := model.VillageID(groupID)
+
+	switch cmd.Action {
 	case actionNone:
 		return NoReplyOutput{}, nil
 
 	case actionCheckGroupState:
-		return h.villageService.CheckStatus(groupID)
+		return h.villageService.CheckStatus(villageID)
 
 	case actionCreateVillage:
-		return h.villageService.Create(groupID)
+		return h.villageService.Create(villageID)
 
 	case actionDeleteVillage:
-		return h.villageService.Delete(groupID)
+		return h.villageService.Delete(villageID)
+
+	case actionJoinVillage:
+		return h.villageService.AddPlayer(villageID, userID, cmd.Target)
+	}
+
+	_, err := h.userPlayerRelationService.GetPlayerIDByUserIDAndVillageID(
+		userID,
+		villageID,
+	)
+	if err != nil {
+		return NoReplyOutput{}, err
 	}
 
 	panic("unreachable")
@@ -44,17 +60,13 @@ func (h MessageHandler) HandleGroupMessage(
 
 func parseGroupMessage(
 	message string,
-	userID model.PlayerID,
-	groupID model.VillageID,
 ) command {
 	replacedMsg := strings.ReplaceAll(message, "＠", "@")
 
 	if replacedMsg == "@" {
 		return command{
-			Action:  actionCheckGroupState,
-			Target:  "",
-			UserID:  userID,
-			GroupID: groupID,
+			Action: actionCheckGroupState,
+			Target: "",
 		}
 	}
 
@@ -67,8 +79,6 @@ func parseGroupMessage(
 	return newGroupCommand(
 		splitMsg[1],
 		splitMsg[0],
-		userID,
-		groupID,
 	)
 }
 
