@@ -43,6 +43,14 @@ func (p Player) MustModel() model.Player {
 
 type Players []Player
 
+func NewPlayers(players model.Players) Players {
+	var result Players
+	for _, v := range players {
+		result = append(result, NewPlayer(v))
+	}
+	return result
+}
+
 func (ps Players) MustModel() model.Players {
 	var result model.Players
 	for _, v := range ps {

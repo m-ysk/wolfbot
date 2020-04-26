@@ -26,7 +26,7 @@ func NewPlayer(
 		VillageID:  villageID,
 		Name:       name,
 		LifeStatus: lifestatus.Alive,
-		Role:       role.Unassigned,
+		Role:       role.Must(role.Unassigned.String()),
 		CreatedAt:  unixtime.Now(),
 		UpdatedAt:  unixtime.Now(),
 	}
@@ -43,6 +43,10 @@ func (ps Players) NamesForHuman() string {
 		result += v.Name.String()
 	}
 	return result
+}
+
+func (ps Players) Count() int {
+	return len(ps)
 }
 
 type PlayerID string

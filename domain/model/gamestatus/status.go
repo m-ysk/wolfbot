@@ -5,15 +5,18 @@ import "errors"
 type GameStatus string
 
 const (
-	RecruitingPlayers GameStatus = "RecruitingPlayers"
+	RecruitingPlayers  GameStatus = "RecruitingPlayers"
+	ConfiguringCasting GameStatus = "ConfiguringCasting"
 )
 
 var stringToStatus = map[string]GameStatus{
-	string(RecruitingPlayers): RecruitingPlayers,
+	string(RecruitingPlayers):  RecruitingPlayers,
+	string(ConfiguringCasting): ConfiguringCasting,
 }
 
 var statusToStringForHuman = map[GameStatus]string{
-	RecruitingPlayers: "参加者募集中",
+	RecruitingPlayers:  "参加者募集中",
+	ConfiguringCasting: "配役設定中",
 }
 
 var (

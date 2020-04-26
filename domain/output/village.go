@@ -3,6 +3,7 @@ package output
 import (
 	"fmt"
 	"wolfbot/domain/model"
+	"wolfbot/domain/model/role"
 )
 
 type VillageCheckStatus struct {
@@ -35,7 +36,10 @@ func (o VillageCheckStatus) Reply() string {
 type VillageCreate struct{}
 
 func (o VillageCreate) Reply() string {
-	return "村を作成しました"
+	return `村を作成しました。
+この村に参加するプレイヤーは、
+（プレイヤー名）＠参加
+と発言してください`
 }
 
 type VillageDelete struct{}
@@ -52,4 +56,24 @@ func (o VillageAddPlayer) Reply() string {
 	return fmt.Sprintf(`プレイヤー名：%v
 で村に参加しました`,
 		o.PlayerName.String())
+}
+
+type VillageFinishRecruiting struct {
+	Game model.Game
+}
+
+func (o VillageFinishRecruiting) Reply() string {
+	return fmt.Sprintf(`参加者の募集を締め切りました。
+
+○参加者
+%v
+
+続いて、配役を設定します。
+
+設定可能な役職は、
+%v
+です。`,
+		o.Game.Players.NamesForHuman(),
+		role.AvailableRoleNames(),
+	)
 }

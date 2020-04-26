@@ -45,6 +45,9 @@ func (h MessageHandler) HandleGroupMessage(
 
 	case actionJoinVillage:
 		return h.villageService.AddPlayer(villageID, userID, cmd.Target)
+
+	case actionFinishRecruiting:
+		return h.villageService.FinishRecruiting(villageID)
 	}
 
 	_, err := h.userPlayerRelationService.GetPlayerIDByUserIDAndVillageID(
@@ -53,6 +56,9 @@ func (h MessageHandler) HandleGroupMessage(
 	)
 	if err != nil {
 		return NoReplyOutput{}, err
+	}
+
+	switch cmd.Action {
 	}
 
 	panic("unreachable")

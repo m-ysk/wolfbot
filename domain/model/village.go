@@ -21,6 +21,21 @@ func NewVillage(id VillageID) Village {
 	}
 }
 
+func (v *Village) UpdateStatus(status gamestatus.GameStatus) {
+	if v == nil {
+		return
+	}
+	v.Status = status
+	v.updateTimestamp()
+}
+
+func (v *Village) updateTimestamp() {
+	if v == nil {
+		return
+	}
+	v.UpdatedAt = unixtime.Now()
+}
+
 type VillageID string
 
 func (id VillageID) String() string {

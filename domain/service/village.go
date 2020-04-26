@@ -1,8 +1,10 @@
 package service
 
 import (
+	"errors"
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
+	"wolfbot/domain/model/errorwr"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/domain/output"
 )
@@ -11,6 +13,7 @@ type VillageService struct {
 	villageRepository            interfaces.VillageRepository
 	playerRepository             interfaces.PlayerRepository
 	userPlayerRelationRepository interfaces.UserPlayerRelationRepository
+	gameRepository               interfaces.GameRepository
 	uuidGenerator                interfaces.UUIDGenerator
 }
 
@@ -18,12 +21,14 @@ func NewVillageService(
 	villageRepository interfaces.VillageRepository,
 	playerRepository interfaces.PlayerRepository,
 	userPlayerRelationRepository interfaces.UserPlayerRelationRepository,
+	gameRepository interfaces.GameRepository,
 	uuidGenerator interfaces.UUIDGenerator,
 ) VillageService {
 	return VillageService{
 		villageRepository:            villageRepository,
 		playerRepository:             playerRepository,
 		userPlayerRelationRepository: userPlayerRelationRepository,
+		gameRepository:               gameRepository,
 		uuidGenerator:                uuidGenerator,
 	}
 }
@@ -130,4 +135,32 @@ func (s VillageService) AddPlayer(
 	return output.VillageAddPlayer{
 		PlayerName: playerName,
 	}, nil
+}
+
+func (s VillageService) FinishRecruiting(
+	villageID model.VillageID,
+) (output.VillageFinishRecruiting, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.VillageFinishRecruiting{}, err
+	}
+
+	if game.Village.Status != gamestatus.RecruitingPlayers {
+		return output.VillageFinishRecruiting{}, ErrorCommandUnauthorized
+	}
+
+	if game.Players.Count() < 3 {
+		return output.VillageFinishRecruiting{}, errorwr.New(
+			errors.New("insufficient_player_count"),
+			"ゲームの開始には3人以上のプレイヤーの参加が必要です",
+		)
+	}
+
+	game.Village.UpdateStatus(gamestatus.ConfiguringCasting)
+
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageFinishRecruiting{}, err
+	}
+
+	return output.VillageFinishRecruiting{Game: game}, nil
 }

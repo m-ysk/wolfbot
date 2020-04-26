@@ -22,16 +22,11 @@ func NewVillage(village model.Village) Village {
 	}
 }
 
-func (v Village) Model() (model.Village, error) {
-	gameStatus, err := gamestatus.New(v.Status)
-	if err != nil {
-		return model.Village{}, err
-	}
-
+func (v Village) MustModel() model.Village {
 	return model.Village{
 		ID:        model.VillageID(v.ID),
-		Status:    gameStatus,
+		Status:    gamestatus.Must(v.Status),
 		CreatedAt: unixtime.UnixTime(v.CreatedAt),
 		UpdatedAt: unixtime.UnixTime(v.UpdatedAt),
-	}, nil
+	}
 }

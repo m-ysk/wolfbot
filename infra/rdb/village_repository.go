@@ -85,5 +85,5 @@ func (repo villageRepository) FindByID(
 		return model.Village{}, err
 	}
 
-	return v.Model()
+	return v.MustModel(), nil
 }

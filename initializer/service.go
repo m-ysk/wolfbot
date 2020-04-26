@@ -12,6 +12,7 @@ func InitService(infra Infra) Service {
 		infra.VillageRepository,
 		infra.PlayerRepository,
 		infra.UserPlayerRelationRepository,
+		infra.GameRepository,
 		infra.UUIDGenerator,
 	)
 
