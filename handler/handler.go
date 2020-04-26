@@ -40,6 +40,9 @@ func (h MessageHandler) HandleGroupMessage(
 	case actionCreateVillage:
 		return h.villageService.Create(villageID)
 
+	case actionCreateVillageForDebug:
+		return h.villageService.CreateForDebug(villageID)
+
 	case actionDeleteVillage:
 		return h.villageService.Delete(villageID)
 

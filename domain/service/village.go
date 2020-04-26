@@ -162,6 +162,15 @@ func (s VillageService) AddPlayersForDebug(
 		return output.VillageAddPlayersForDebug{}, err
 	}
 
+	village, err := s.villageRepository.FindByID(villageID)
+	if err != nil {
+		return output.VillageAddPlayersForDebug{}, err
+	}
+
+	if !village.IsDebug() {
+		return output.VillageAddPlayersForDebug{}, ErrorInvalidCallToDebugFunction
+	}
+
 	names := []string{"あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ"}
 
 	for i := 0; i < num; i++ {

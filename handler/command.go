@@ -37,19 +37,21 @@ func newActionNoneCommand() command {
 type action string
 
 const (
-	actionNone               action = "None"
-	actionCheckGroupState    action = "CheckGroupState"
-	actionCreateVillage      action = "CreateVillage"
-	actionDeleteVillage      action = "DeleteVillage"
-	actionJoinVillage        action = "JoinVillage"
-	actionAddPlayersForDebug action = "AddPlayersForDebug"
-	actionFinishRecruiting   action = "FinishRecruiting"
+	actionNone                  action = "None"
+	actionCheckGroupState       action = "CheckGroupState"
+	actionCreateVillage         action = "CreateVillage"
+	actionCreateVillageForDebug action = "CreateVillageForDebug"
+	actionDeleteVillage         action = "DeleteVillage"
+	actionJoinVillage           action = "JoinVillage"
+	actionAddPlayersForDebug    action = "AddPlayersForDebug"
+	actionFinishRecruiting      action = "FinishRecruiting"
 )
 
 var groupActionMap = map[string]action{
-	"村作成":    actionCreateVillage,
-	"村削除":    actionDeleteVillage,
-	"参加":     actionJoinVillage,
-	"デバッグ参加": actionAddPlayersForDebug,
-	"募集終了":   actionFinishRecruiting,
+	"村作成":     actionCreateVillage,
+	"デバッグ村作成": actionCreateVillageForDebug,
+	"村削除":     actionDeleteVillage,
+	"参加":      actionJoinVillage,
+	"デバッグ参加":  actionAddPlayersForDebug,
+	"募集終了":    actionFinishRecruiting,
 }

@@ -20,4 +20,9 @@ var (
 		errors.New("duplicated_player_name_in_same_user"),
 		"あなたは同じプレイヤー名で他の村に参加しています。複数の村に同時に参加する場合、異なるプレイヤー名を使用してください。",
 	)
+
+	ErrorInvalidCallToDebugFunction = errorwr.New(
+		errors.New("invalid_call_to_debug_function"),
+		"現在はデバッグモードではありません",
+	)
 )
