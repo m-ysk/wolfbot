@@ -39,12 +39,11 @@ func migrate(db *gorm.DB) {
 	db.AutoMigrate(&rdb.Village{})
 
 	db.AutoMigrate(&rdb.Player{})
-	db.Model(&rdb.Player{}).AddIndex("idx_player_village_id", "village_id")
+	db.Model(&rdb.Player{}).AddIndex("idx_players_village_id", "village_id")
 
 	db.AutoMigrate(&rdb.UserPlayerRelation{})
-	db.Model(&rdb.UserPlayerRelation{}).AddUniqueIndex(
-		"unique_idx_user_id_player_name",
-		"user_id",
-		"player_name",
+	db.Model(&rdb.UserPlayerRelation{}).AddIndex(
+		"idx_user_player_relations_village_id",
+		"village_id",
 	)
 }

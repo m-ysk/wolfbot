@@ -7,8 +7,8 @@ import (
 
 type UserPlayerRelation struct {
 	UserID     string `sql:"primary_key"`
-	VillageID  string `sql:"primary_key"`
-	PlayerName string `sql:"not null;default:''"`
+	PlayerName string `sql:"primary_key"`
+	VillageID  string `sql:"not null;default:''"`
 	PlayerID   string `sql:"not null;default:''"`
 	CreatedAt  int64  `sql:"not null;default:0"`
 	UpdatedAt  int64  `sql:"not null;default:0"`
