@@ -10,9 +10,9 @@ import (
 )
 
 type Village struct {
-	ID        sql.NullString `sql:"primary_key;not null"`
-	Status    sql.NullString `sql:"not null;default:''"`
-	Debug     sql.NullString `sql:"not null;default:''"`
+	ID        sql.NullString `sql:"primary_key;type:varchar;size:255;not null"`
+	Status    sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
+	Debug     sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Version   sql.NullInt64  `sql:"not null;default:0"`
 	CreatedAt sql.NullInt64  `sql:"not null;default:0"`
 	UpdatedAt sql.NullInt64  `sql:"not null;default:0"`

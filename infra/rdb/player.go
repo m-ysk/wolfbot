@@ -10,11 +10,11 @@ import (
 )
 
 type Player struct {
-	ID         sql.NullString `sql:"primary_key;not null"`
-	VillageID  sql.NullString `sql:"not null;default:''"`
-	Name       sql.NullString `sql:"not null;default:''"`
-	LifeStatus sql.NullString `sql:"not null;default:''"`
-	Role       sql.NullString `sql:"not null;default:''"`
+	ID         sql.NullString `sql:"primary_key;type:varchar;size:255;not null"`
+	VillageID  sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
+	Name       sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
+	LifeStatus sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
+	Role       sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Version    sql.NullInt64  `sql:"not null;default:0"`
 	CreatedAt  sql.NullInt64  `sql:"not null;default:0"`
 	UpdatedAt  sql.NullInt64  `sql:"not null;default:0"`

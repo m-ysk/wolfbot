@@ -8,10 +8,10 @@ import (
 )
 
 type UserPlayerRelation struct {
-	UserID     sql.NullString `sql:"primary_key"`
-	PlayerName sql.NullString `sql:"primary_key"`
-	VillageID  sql.NullString `sql:"not null;default:''"`
-	PlayerID   sql.NullString `sql:"not null;default:''"`
+	UserID     sql.NullString `sql:"primary_key;type:varchar;size:255"`
+	PlayerName sql.NullString `sql:"primary_key;type:varchar;size:255"`
+	VillageID  sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
+	PlayerID   sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Version    sql.NullInt64  `sql:"not null;default:0"`
 	CreatedAt  sql.NullInt64  `sql:"not null;default:0"`
 	UpdatedAt  sql.NullInt64  `sql:"not null;default:0"`
