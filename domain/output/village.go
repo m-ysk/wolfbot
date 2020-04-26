@@ -58,6 +58,14 @@ func (o VillageAddPlayer) Reply() string {
 		o.PlayerName.String())
 }
 
+type VillageAddPlayersForDebug struct {
+	Number int
+}
+
+func (o VillageAddPlayersForDebug) Reply() string {
+	return fmt.Sprintf("%v人の参加者を登録しました", o.Number)
+}
+
 type VillageFinishRecruiting struct {
 	Game model.Game
 }

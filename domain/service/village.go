@@ -2,6 +2,8 @@ package service
 
 import (
 	"errors"
+	"strconv"
+	"time"
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/errorwr"
@@ -135,6 +137,28 @@ func (s VillageService) AddPlayer(
 	return output.VillageAddPlayer{
 		PlayerName: playerName,
 	}, nil
+}
+
+func (s VillageService) AddPlayersForDebug(
+	villageID model.VillageID,
+	userID model.UserID,
+	number string,
+) (output.VillageAddPlayersForDebug, error) {
+	num, err := strconv.Atoi(number)
+	if err != nil {
+		return output.VillageAddPlayersForDebug{}, err
+	}
+
+	names := []string{"あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ"}
+
+	for i := 0; i < num; i++ {
+		if _, err := s.AddPlayer(villageID, userID, names[i]); err != nil {
+			return output.VillageAddPlayersForDebug{}, err
+		}
+		time.Sleep(time.Millisecond * 200)
+	}
+
+	return output.VillageAddPlayersForDebug{Number: num}, nil
 }
 
 func (s VillageService) FinishRecruiting(

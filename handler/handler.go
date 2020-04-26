@@ -46,6 +46,9 @@ func (h MessageHandler) HandleGroupMessage(
 	case actionJoinVillage:
 		return h.villageService.AddPlayer(villageID, userID, cmd.Target)
 
+	case actionAddPlayersForDebug:
+		return h.villageService.AddPlayersForDebug(villageID, userID, cmd.Target)
+
 	case actionFinishRecruiting:
 		return h.villageService.FinishRecruiting(villageID)
 	}
