@@ -29,13 +29,13 @@ func (repo gameRepository) Update(game model.Game) error {
 		ID:      village.ID,
 		Version: village.CurrentVersion(),
 	}).Omit("id").Updates(&village)
-	if result.RowsAffected == 0 {
-		Rollback(tx)
-		return errors.New("failed to update village: id: " + village.ID.String)
-	}
 	if err := result.Error; err != nil {
 		Rollback(tx)
 		return err
+	}
+	if result.RowsAffected == 0 {
+		Rollback(tx)
+		return errors.New("failed to update village: id: " + village.ID.String)
 	}
 
 	for _, p := range players {
@@ -43,13 +43,13 @@ func (repo gameRepository) Update(game model.Game) error {
 			ID:      p.ID,
 			Version: p.CurrentVersion(),
 		}).Omit("id").Updates(&p)
-		if result.RowsAffected == 0 {
-			Rollback(tx)
-			return errors.New("failed to update player: id: " + p.ID.String)
-		}
 		if err := result.Error; err != nil {
 			Rollback(tx)
 			return err
+		}
+		if result.RowsAffected == 0 {
+			Rollback(tx)
+			return errors.New("failed to update player: id: " + p.ID.String)
 		}
 	}
 
