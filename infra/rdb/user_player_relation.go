@@ -41,6 +41,13 @@ func (r UserPlayerRelation) MustModel() model.UserPlayerRelation {
 	}
 }
 
+func (r UserPlayerRelation) CurrentVersion() sql.NullInt64 {
+	return sql.NullInt64{
+		Int64: r.Version.Int64 - 1,
+		Valid: true,
+	}
+}
+
 type UserPlayerRelations []UserPlayerRelation
 
 func (rs UserPlayerRelations) MustModel() model.UserPlayerRelations {

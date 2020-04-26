@@ -25,13 +25,29 @@ func (repo gameRepository) Update(game model.Game) error {
 		}
 	}()
 
-	if err := tx.Save(&village).Error; err != nil {
+	result := tx.Where(&Village{
+		ID:      village.ID,
+		Version: village.CurrentVersion(),
+	}).Updates(&village)
+	if result.RowsAffected == 0 {
+		Rollback(tx)
+		return errors.New("failed to update village: id: " + village.ID.String)
+	}
+	if err := result.Error; err != nil {
 		Rollback(tx)
 		return err
 	}
 
 	for _, p := range players {
-		if err := tx.Save(&p).Error; err != nil {
+		result := tx.Where(&Village{
+			ID:      p.ID,
+			Version: p.CurrentVersion(),
+		}).Updates(&p)
+		if result.RowsAffected == 0 {
+			Rollback(tx)
+			return errors.New("failed to update player: id: " + p.ID.String)
+		}
+		if err := result.Error; err != nil {
 			Rollback(tx)
 			return err
 		}

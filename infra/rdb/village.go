@@ -39,3 +39,10 @@ func (v Village) MustModel() model.Village {
 		UpdatedAt: unixtime.UnixTime(v.UpdatedAt.Int64),
 	}
 }
+
+func (v Village) CurrentVersion() sql.NullInt64 {
+	return sql.NullInt64{
+		Int64: v.Version.Int64 - 1,
+		Valid: true,
+	}
+}

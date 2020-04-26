@@ -46,6 +46,13 @@ func (p Player) MustModel() model.Player {
 	}
 }
 
+func (p Player) CurrentVersion() sql.NullInt64 {
+	return sql.NullInt64{
+		Int64: p.Version.Int64 - 1,
+		Valid: true,
+	}
+}
+
 type Players []Player
 
 func NewPlayers(players model.Players) Players {
