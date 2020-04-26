@@ -6,6 +6,7 @@ import (
 	"time"
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
+	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/errorwr"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/domain/output"
@@ -64,7 +65,19 @@ func (s VillageService) CheckStatus(
 func (s VillageService) Create(
 	id model.VillageID,
 ) (output.VillageCreate, error) {
-	village := model.NewVillage(id)
+	village := model.NewVillage(id, debug.Normal)
+
+	if err := s.villageRepository.Create(village); err != nil {
+		return output.VillageCreate{}, err
+	}
+
+	return output.VillageCreate{}, nil
+}
+
+func (s VillageService) CreateForDebug(
+	id model.VillageID,
+) (output.VillageCreate, error) {
+	village := model.NewVillage(id, debug.Debug)
 
 	if err := s.villageRepository.Create(village); err != nil {
 		return output.VillageCreate{}, err
@@ -106,7 +119,7 @@ func (s VillageService) AddPlayer(
 	}
 
 	// 同一Group内で同じUserが既にPlayer登録されている場合はエラー
-	if _, ok := relations.FindByVillageID(villageID); ok {
+	if _, ok := relations.FindByVillageID(villageID); !village.IsDebug() && ok {
 		return output.VillageAddPlayer{}, ErrorDuplicatedPlayerInGroup
 	}
 

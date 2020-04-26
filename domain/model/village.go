@@ -1,6 +1,7 @@
 package model
 
 import (
+	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/lib/unixtime"
 )
@@ -8,14 +9,16 @@ import (
 type Village struct {
 	ID        VillageID
 	Status    gamestatus.GameStatus
+	Debug     debug.Mode
 	CreatedAt unixtime.UnixTime
 	UpdatedAt unixtime.UnixTime
 }
 
-func NewVillage(id VillageID) Village {
+func NewVillage(id VillageID, debug debug.Mode) Village {
 	return Village{
 		ID:        id,
 		Status:    gamestatus.RecruitingPlayers,
+		Debug:     debug,
 		CreatedAt: unixtime.Now(),
 		UpdatedAt: unixtime.Now(),
 	}
@@ -27,6 +30,13 @@ func (v *Village) UpdateStatus(status gamestatus.GameStatus) {
 	}
 	v.Status = status
 	v.updateTimestamp()
+}
+
+func (v *Village) IsDebug() bool {
+	if v == nil {
+		return false
+	}
+	return v.Debug == debug.Debug
 }
 
 func (v *Village) updateTimestamp() {
