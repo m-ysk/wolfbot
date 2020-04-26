@@ -3,6 +3,7 @@ package rdb
 import (
 	"database/sql"
 	"wolfbot/domain/model"
+	"wolfbot/lib/optlock"
 	"wolfbot/lib/unixtime"
 )
 
@@ -11,6 +12,7 @@ type UserPlayerRelation struct {
 	PlayerName sql.NullString `sql:"primary_key"`
 	VillageID  sql.NullString `sql:"not null;default:''"`
 	PlayerID   sql.NullString `sql:"not null;default:''"`
+	Version    sql.NullInt64  `sql:"not null;default:0"`
 	CreatedAt  sql.NullInt64  `sql:"not null;default:0"`
 	UpdatedAt  sql.NullInt64  `sql:"not null;default:0"`
 }
@@ -21,6 +23,7 @@ func NewUserPlayerRelation(relation model.UserPlayerRelation) UserPlayerRelation
 		VillageID:  relation.VillageID.NullString(),
 		PlayerName: relation.PlayerName.NullString(),
 		PlayerID:   relation.PlayerID.NullString(),
+		Version:    relation.Version.NullInt64WithIncrement(),
 		CreatedAt:  relation.CreatedAt.NullInt64(),
 		UpdatedAt:  relation.UpdatedAt.NullInt64(),
 	}
@@ -32,6 +35,7 @@ func (r UserPlayerRelation) MustModel() model.UserPlayerRelation {
 		VillageID:  model.VillageID(r.VillageID.String),
 		PlayerName: model.MustPlayerName(r.PlayerName.String),
 		PlayerID:   model.PlayerID(r.PlayerID.String),
+		Version:    optlock.Version(r.Version.Int64),
 		CreatedAt:  unixtime.UnixTime(r.CreatedAt.Int64),
 		UpdatedAt:  unixtime.UnixTime(r.UpdatedAt.Int64),
 	}

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
+	"wolfbot/lib/optlock"
 	"wolfbot/lib/unixtime"
 )
 
@@ -11,6 +12,7 @@ type Village struct {
 	ID        VillageID
 	Status    gamestatus.GameStatus
 	Debug     debug.Mode
+	Version   optlock.Version
 	CreatedAt unixtime.UnixTime
 	UpdatedAt unixtime.UnixTime
 }
@@ -20,6 +22,7 @@ func NewVillage(id VillageID, debug debug.Mode) Village {
 		ID:        id,
 		Status:    gamestatus.RecruitingPlayers,
 		Debug:     debug,
+		Version:   0,
 		CreatedAt: unixtime.Now(),
 		UpdatedAt: unixtime.Now(),
 	}
