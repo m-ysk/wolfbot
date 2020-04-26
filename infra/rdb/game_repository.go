@@ -25,9 +25,9 @@ func (repo gameRepository) Update(game model.Game) error {
 		}
 	}()
 
-	result := tx.Where(&Village{
-		ID:      village.ID,
-		Version: village.CurrentVersion(),
+	result := tx.Model(&Village{}).Where(map[string]interface{}{
+		"id":      village.ID.String,
+		"version": village.CurrentVersion().Int64,
 	}).Omit("id").Updates(&village)
 	if err := result.Error; err != nil {
 		Rollback(tx)
