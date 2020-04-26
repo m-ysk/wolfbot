@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/lib/unixtime"
@@ -52,8 +53,22 @@ func (id VillageID) String() string {
 	return string(id)
 }
 
+func (id VillageID) NullString() sql.NullString {
+	return sql.NullString{
+		String: id.String(),
+		Valid:  true,
+	}
+}
+
 type VillageStatus string
 
 func (s VillageStatus) String() string {
 	return string(s)
+}
+
+func (s VillageStatus) NullString() sql.NullString {
+	return sql.NullString{
+		String: s.String(),
+		Valid:  true,
+	}
 }

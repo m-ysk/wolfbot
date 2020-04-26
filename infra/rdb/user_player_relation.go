@@ -1,38 +1,39 @@
 package rdb
 
 import (
+	"database/sql"
 	"wolfbot/domain/model"
 	"wolfbot/lib/unixtime"
 )
 
 type UserPlayerRelation struct {
-	UserID     string `sql:"primary_key"`
-	PlayerName string `sql:"primary_key"`
-	VillageID  string `sql:"not null;default:''"`
-	PlayerID   string `sql:"not null;default:''"`
-	CreatedAt  int64  `sql:"not null;default:0"`
-	UpdatedAt  int64  `sql:"not null;default:0"`
+	UserID     sql.NullString `sql:"primary_key"`
+	PlayerName sql.NullString `sql:"primary_key"`
+	VillageID  sql.NullString `sql:"not null;default:''"`
+	PlayerID   sql.NullString `sql:"not null;default:''"`
+	CreatedAt  sql.NullInt64  `sql:"not null;default:0"`
+	UpdatedAt  sql.NullInt64  `sql:"not null;default:0"`
 }
 
 func NewUserPlayerRelation(relation model.UserPlayerRelation) UserPlayerRelation {
 	return UserPlayerRelation{
-		UserID:     relation.UserID.String(),
-		VillageID:  relation.VillageID.String(),
-		PlayerName: relation.PlayerName.String(),
-		PlayerID:   relation.PlayerID.String(),
-		CreatedAt:  relation.CreatedAt.Int64(),
-		UpdatedAt:  relation.UpdatedAt.Int64(),
+		UserID:     relation.UserID.NullString(),
+		VillageID:  relation.VillageID.NullString(),
+		PlayerName: relation.PlayerName.NullString(),
+		PlayerID:   relation.PlayerID.NullString(),
+		CreatedAt:  relation.CreatedAt.NullInt64(),
+		UpdatedAt:  relation.UpdatedAt.NullInt64(),
 	}
 }
 
 func (r UserPlayerRelation) MustModel() model.UserPlayerRelation {
 	return model.UserPlayerRelation{
-		UserID:     model.UserID(r.UserID),
-		VillageID:  model.VillageID(r.VillageID),
-		PlayerName: model.MustPlayerName(r.PlayerName),
-		PlayerID:   model.PlayerID(r.PlayerID),
-		CreatedAt:  unixtime.UnixTime(r.CreatedAt),
-		UpdatedAt:  unixtime.UnixTime(r.UpdatedAt),
+		UserID:     model.UserID(r.UserID.String),
+		VillageID:  model.VillageID(r.VillageID.String),
+		PlayerName: model.MustPlayerName(r.PlayerName.String),
+		PlayerID:   model.PlayerID(r.PlayerID.String),
+		CreatedAt:  unixtime.UnixTime(r.CreatedAt.Int64),
+		UpdatedAt:  unixtime.UnixTime(r.UpdatedAt.Int64),
 	}
 }
 

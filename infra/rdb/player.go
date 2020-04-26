@@ -1,6 +1,7 @@
 package rdb
 
 import (
+	"database/sql"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/lifestatus"
 	"wolfbot/domain/model/role"
@@ -8,36 +9,36 @@ import (
 )
 
 type Player struct {
-	ID         string `sql:"primary_key;not null"`
-	VillageID  string `sql:"not null;default:''"`
-	Name       string `sql:"not null;default:''"`
-	LifeStatus string `sql:"not null;default:''"`
-	Role       string `sql:"not null;default:''"`
-	CreatedAt  int64  `sql:"not null;default:0"`
-	UpdatedAt  int64  `sql:"not null;default:0"`
+	ID         sql.NullString `sql:"primary_key;not null"`
+	VillageID  sql.NullString `sql:"not null;default:''"`
+	Name       sql.NullString `sql:"not null;default:''"`
+	LifeStatus sql.NullString `sql:"not null;default:''"`
+	Role       sql.NullString `sql:"not null;default:''"`
+	CreatedAt  sql.NullInt64  `sql:"not null;default:0"`
+	UpdatedAt  sql.NullInt64  `sql:"not null;default:0"`
 }
 
 func NewPlayer(player model.Player) Player {
 	return Player{
-		ID:         player.ID.String(),
-		VillageID:  player.VillageID.String(),
-		Name:       player.Name.String(),
-		LifeStatus: player.LifeStatus.String(),
-		Role:       player.Role.String(),
-		CreatedAt:  player.CreatedAt.Int64(),
-		UpdatedAt:  player.UpdatedAt.Int64(),
+		ID:         player.ID.NullString(),
+		VillageID:  player.VillageID.NullString(),
+		Name:       player.Name.NullString(),
+		LifeStatus: player.LifeStatus.NullString(),
+		Role:       player.Role.NullString(),
+		CreatedAt:  player.CreatedAt.NullInt64(),
+		UpdatedAt:  player.UpdatedAt.NullInt64(),
 	}
 }
 
 func (p Player) MustModel() model.Player {
 	return model.Player{
-		ID:         model.PlayerID(p.ID),
-		VillageID:  model.VillageID(p.VillageID),
-		Name:       model.PlayerName(p.Name),
-		LifeStatus: lifestatus.Must(p.LifeStatus),
-		Role:       role.Must(p.Role),
-		CreatedAt:  unixtime.UnixTime(p.CreatedAt),
-		UpdatedAt:  unixtime.UnixTime(p.UpdatedAt),
+		ID:         model.PlayerID(p.ID.String),
+		VillageID:  model.VillageID(p.VillageID.String),
+		Name:       model.PlayerName(p.Name.String),
+		LifeStatus: lifestatus.Must(p.LifeStatus.String),
+		Role:       role.Must(p.Role.String),
+		CreatedAt:  unixtime.UnixTime(p.CreatedAt.Int64),
+		UpdatedAt:  unixtime.UnixTime(p.UpdatedAt.Int64),
 	}
 }
 

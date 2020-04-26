@@ -36,7 +36,7 @@ func (repo villageRepository) Delete(id model.VillageID) error {
 	}()
 
 	if err := tx.Delete(&Village{
-		ID: id.String(),
+		ID: id.NullString(),
 	}).Error; err != nil {
 		log.Println(err)
 		Rollback(tx)
@@ -44,7 +44,7 @@ func (repo villageRepository) Delete(id model.VillageID) error {
 	}
 
 	if err := tx.Delete(&Player{
-		VillageID: id.String(),
+		VillageID: id.NullString(),
 	}).Error; err != nil {
 		log.Println(err)
 		Rollback(tx)
@@ -52,7 +52,7 @@ func (repo villageRepository) Delete(id model.VillageID) error {
 	}
 
 	if err := tx.Delete(&UserPlayerRelation{
-		VillageID: id.String(),
+		VillageID: id.NullString(),
 	}).Error; err != nil {
 		log.Println(err)
 		Rollback(tx)
@@ -74,7 +74,7 @@ func (repo villageRepository) FindByID(
 	var v Village
 
 	result := repo.db.Where(&Village{
-		ID: id.String(),
+		ID: id.NullString(),
 	}).First(&v)
 	if result.RecordNotFound() {
 		return model.Village{}, NewErrorNotFound(

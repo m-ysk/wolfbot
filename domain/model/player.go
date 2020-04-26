@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"wolfbot/domain/model/lifestatus"
 	"wolfbot/domain/model/role"
 	"wolfbot/lib/unixtime"
@@ -55,6 +56,13 @@ func (id PlayerID) String() string {
 	return string(id)
 }
 
+func (id PlayerID) NullString() sql.NullString {
+	return sql.NullString{
+		String: id.String(),
+		Valid:  true,
+	}
+}
+
 type PlayerName string
 
 func NewPlayerName(name string) (PlayerName, error) {
@@ -71,4 +79,11 @@ func MustPlayerName(name string) PlayerName {
 
 func (n PlayerName) String() string {
 	return string(n)
+}
+
+func (n PlayerName) NullString() sql.NullString {
+	return sql.NullString{
+		String: n.String(),
+		Valid:  true,
+	}
 }

@@ -47,7 +47,7 @@ func (repo gameRepository) Update(game model.Game) error {
 func (repo gameRepository) FindByVillageID(villageID model.VillageID) (model.Game, error) {
 	var v Village
 	result := repo.db.Where(&Village{
-		ID: villageID.String(),
+		ID: villageID.NullString(),
 	}).First(&v)
 	if result.RecordNotFound() {
 		return model.Game{}, NewErrorNotFound(
@@ -60,7 +60,7 @@ func (repo gameRepository) FindByVillageID(villageID model.VillageID) (model.Gam
 
 	var ps Players
 	if err := repo.db.Where(&Player{
-		VillageID: villageID.String(),
+		VillageID: villageID.NullString(),
 	}).Find(&ps).Error; err != nil {
 		return model.Game{}, err
 	}

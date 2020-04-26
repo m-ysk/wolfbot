@@ -1,6 +1,9 @@
 package lifestatus
 
-import "errors"
+import (
+	"database/sql"
+	"errors"
+)
 
 type LifeStatus string
 
@@ -40,6 +43,13 @@ func Must(str string) LifeStatus {
 
 func (s LifeStatus) String() string {
 	return string(s)
+}
+
+func (s LifeStatus) NullString() sql.NullString {
+	return sql.NullString{
+		String: s.String(),
+		Valid:  true,
+	}
 }
 
 func (s LifeStatus) StringForHuman() string {

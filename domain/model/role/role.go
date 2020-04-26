@@ -1,5 +1,7 @@
 package role
 
+import "database/sql"
+
 type Role struct {
 	ID   ID
 	Name string
@@ -32,4 +34,11 @@ func Must(str string) Role {
 
 func (r Role) String() string {
 	return string(r.ID)
+}
+
+func (r Role) NullString() sql.NullString {
+	return sql.NullString{
+		String: r.String(),
+		Valid:  true,
+	}
 }

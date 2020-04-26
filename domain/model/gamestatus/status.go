@@ -1,6 +1,9 @@
 package gamestatus
 
-import "errors"
+import (
+	"database/sql"
+	"errors"
+)
 
 type GameStatus string
 
@@ -40,6 +43,13 @@ func Must(str string) GameStatus {
 
 func (s GameStatus) String() string {
 	return string(s)
+}
+
+func (s GameStatus) NullString() sql.NullString {
+	return sql.NullString{
+		String: s.String(),
+		Valid:  true,
+	}
 }
 
 func (s GameStatus) StringForHuman() string {

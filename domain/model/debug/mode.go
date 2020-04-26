@@ -1,6 +1,9 @@
 package debug
 
-import "errors"
+import (
+	"database/sql"
+	"errors"
+)
 
 type Mode string
 
@@ -33,4 +36,11 @@ func Must(str string) Mode {
 
 func (m Mode) String() string {
 	return string(m)
+}
+
+func (m Mode) NullString() sql.NullString {
+	return sql.NullString{
+		String: m.String(),
+		Valid:  true,
+	}
 }

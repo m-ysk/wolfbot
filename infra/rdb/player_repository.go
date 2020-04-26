@@ -55,7 +55,7 @@ func (repo playerRepository) Create(
 
 func (repo playerRepository) Delete(id model.PlayerID) error {
 	if err := repo.db.Delete(&Player{
-		ID: id.String(),
+		ID: id.NullString(),
 	}).Error; err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func (repo playerRepository) FindByID(
 	var p Player
 
 	result := repo.db.Where(&Player{
-		ID: id.String(),
+		ID: id.NullString(),
 	}).First(&p)
 	if result.RecordNotFound() {
 		return model.Player{}, NewErrorNotFound(
@@ -87,7 +87,7 @@ func (repo playerRepository) FindByVillageID(
 ) (model.Players, error) {
 	var ps Players
 	if err := repo.db.Where(Player{
-		VillageID: villageID.String(),
+		VillageID: villageID.NullString(),
 	}).Find(&ps).Error; err != nil {
 		return nil, err
 	}

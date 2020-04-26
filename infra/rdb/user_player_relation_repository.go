@@ -29,8 +29,8 @@ func (repo userPlayerRelationRepository) Create(relation model.UserPlayerRelatio
 
 func (repo userPlayerRelationRepository) Delete(userID model.UserID, villageID model.VillageID) error {
 	if err := repo.db.Delete(&UserPlayerRelation{
-		UserID:    userID.String(),
-		VillageID: villageID.String(),
+		UserID:    userID.NullString(),
+		VillageID: villageID.NullString(),
 	}).Error; err != nil {
 		return err
 	}
@@ -44,8 +44,8 @@ func (repo userPlayerRelationRepository) FindByUserIDAndVillageID(
 	var r UserPlayerRelation
 
 	result := repo.db.Where(&UserPlayerRelation{
-		UserID:    userID.String(),
-		VillageID: villageID.String(),
+		UserID:    userID.NullString(),
+		VillageID: villageID.NullString(),
 	}).First(&r)
 	if result.RecordNotFound() {
 		return model.UserPlayerRelation{}, NewErrorNotFound(
@@ -71,7 +71,7 @@ func (repo userPlayerRelationRepository) FindByUserID(
 	var rs UserPlayerRelations
 
 	result := repo.db.Where(&UserPlayerRelation{
-		UserID: userID.String(),
+		UserID: userID.NullString(),
 	}).Find(&rs)
 	if err := result.Error; err != nil {
 		return nil, err
