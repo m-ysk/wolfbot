@@ -60,6 +60,9 @@ func (h MessageHandler) HandleGroupMessage(
 
 	case actionConfirm:
 		return h.villageService.Confirm(villageID)
+
+	case actionReject:
+		return h.villageService.Reject(villageID)
 	}
 
 	_, err := h.userPlayerRelationService.GetPlayerIDByUserIDAndVillageID(

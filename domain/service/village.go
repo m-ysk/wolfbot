@@ -267,3 +267,26 @@ func (s VillageService) Confirm(
 		return output.VillageConfirm{}, ErrorCommandUnauthorized
 	}
 }
+
+func (s VillageService) Reject(
+	villageID model.VillageID,
+) (output.VillageReject, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.VillageReject{}, err
+	}
+
+	switch st := game.Village.Status; st {
+	case gamestatus.ConfirmingCasting:
+		game.Village.UpdateStatus(gamestatus.ConfiguringCasting)
+		if err := s.gameRepository.Update(game); err != nil {
+			return output.VillageReject{}, err
+		}
+		return output.VillageReject{
+			PrevStatus: st,
+		}, nil
+
+	default:
+		return output.VillageReject{}, ErrorCommandUnauthorized
+	}
+}

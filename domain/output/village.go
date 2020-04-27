@@ -145,6 +145,36 @@ func (o VillageConfirm) Reply() string {
 と入力してください。`)
 
 	default:
+		// Unreachable
+		return ""
+	}
+}
+
+type VillageReject struct {
+	PrevStatus gamestatus.GameStatus
+}
+
+func (o VillageReject) Reply() string {
+	switch st := o.PrevStatus; st {
+	case gamestatus.ConfirmingCasting:
+		return fmt.Sprintf(`配役の設定をキャンセルしました。
+
+もう一度配役を設定します。
+
+設定可能な役職は、
+%v
+です。
+
+設定したい配役を以下のように発言してください。
+（残った人数には自動的に村人が設定されます）
+
+○占い師1人、霊能者1人、狩人1人、人狼2人、残りを村人に設定する場合の例
+
+占霊狩狼狼＠配役設定`,
+			role.AvailableRoleNames())
+
+	default:
+		// Unreachable
 		return ""
 	}
 }

@@ -47,6 +47,7 @@ const (
 	actionFinishRecruiting      action = "FinishRecruiting"
 	actionConfigureCasting      action = "ConfigureCasting"
 	actionConfirm               action = "Confirm"
+	actionReject                action = "Reject"
 )
 
 var groupActionMap = map[string]action{
@@ -58,4 +59,5 @@ var groupActionMap = map[string]action{
 	"募集終了":    actionFinishRecruiting,
 	"配役設定":    actionConfigureCasting,
 	"はい":      actionConfirm,
+	"いいえ":     actionReject,
 }
