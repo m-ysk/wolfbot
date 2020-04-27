@@ -2,6 +2,7 @@ package rdb
 
 import (
 	"database/sql"
+	"time"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
@@ -14,8 +15,8 @@ type Village struct {
 	Status    sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Debug     sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Version   sql.NullInt64  `sql:"not null;default:0"`
-	CreatedAt sql.NullInt64  `sql:"not null;default:0"`
-	UpdatedAt sql.NullInt64  `sql:"not null;default:0"`
+	CreatedAt time.Time      `sql:"not null"`
+	UpdatedAt time.Time      `sql:"not null"`
 }
 
 func NewVillage(village model.Village) Village {
@@ -24,8 +25,8 @@ func NewVillage(village model.Village) Village {
 		Status:    village.Status.NullString(),
 		Debug:     village.Debug.NullString(),
 		Version:   village.Version.NullInt64WithIncrement(),
-		CreatedAt: village.CreatedAt.NullInt64(),
-		UpdatedAt: village.UpdatedAt.NullInt64(),
+		CreatedAt: time.Unix(village.CreatedAt.Int64(), 0),
+		UpdatedAt: time.Unix(village.UpdatedAt.Int64(), 0),
 	}
 }
 
@@ -35,8 +36,8 @@ func (v Village) MustModel() model.Village {
 		Status:    gamestatus.Must(v.Status.String),
 		Debug:     debug.Must(v.Debug.String),
 		Version:   optlock.Version(v.Version.Int64),
-		CreatedAt: unixtime.UnixTime(v.CreatedAt.Int64),
-		UpdatedAt: unixtime.UnixTime(v.UpdatedAt.Int64),
+		CreatedAt: unixtime.UnixTime(v.CreatedAt.Unix()),
+		UpdatedAt: unixtime.UnixTime(v.UpdatedAt.Unix()),
 	}
 }
 
