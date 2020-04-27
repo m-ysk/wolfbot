@@ -3,6 +3,7 @@ package output
 import (
 	"fmt"
 	"wolfbot/domain/model"
+	"wolfbot/domain/model/gamestatus"
 	"wolfbot/domain/model/role"
 )
 
@@ -112,4 +113,38 @@ func (o VillageConfigureCasting) Reply() string {
 と発言してください`,
 		o.Casting.StringForHuman(),
 	)
+}
+
+type VillageConfirm struct {
+	PrevStatus gamestatus.GameStatus
+}
+
+func (o VillageConfirm) Reply() string {
+	switch st := o.PrevStatus; st {
+	case gamestatus.ConfirmingCasting:
+		return fmt.Sprintf(`配役を設定しました。
+続いて、ルールを設定します。
+
+ルールはデフォルトで以下のように設定されています。
+[1]投票結果が同数の場合：再投票
+[2]初日の占い：人狼ではない人物をランダムで通知
+[3]狩人の連続ガード：不可
+[4]狩人の自分ガード：不可
+ルールを変更する場合は、
+
+（変更したい項目の番号）＠変更
+
+と入力してください。
+例えば、「狩人の連続ガード」を変更する場合のコマンドは、
+3＠変更
+となります。
+このままの設定でゲームを開始する場合は、
+
+＠設定終了
+
+と入力してください。`)
+
+	default:
+		return ""
+	}
 }

@@ -20,7 +20,7 @@ func NewVillageRepository(db *gorm.DB) villageRepository {
 }
 
 func (repo villageRepository) Create(village model.Village) error {
-	v := NewVillage(village)
+	v := MustVillage(village)
 	if err := repo.db.Create(&v).Error; err != nil {
 		return err
 	}

@@ -16,18 +16,23 @@ const (
 
 	// 配役設定結果の確認中
 	ConfirmingCasting GameStatus = "ConfirmingCasting"
+
+	// ルール設定中
+	ConfiguringRegulation GameStatus = "ConfiguringRegulation"
 )
 
 var stringToStatus = map[string]GameStatus{
-	string(RecruitingPlayers):  RecruitingPlayers,
-	string(ConfiguringCasting): ConfiguringCasting,
-	string(ConfirmingCasting):  ConfirmingCasting,
+	string(RecruitingPlayers):     RecruitingPlayers,
+	string(ConfiguringCasting):    ConfiguringCasting,
+	string(ConfirmingCasting):     ConfirmingCasting,
+	string(ConfiguringRegulation): ConfiguringRegulation,
 }
 
 var statusToStringForHuman = map[GameStatus]string{
-	RecruitingPlayers:  "参加者募集中",
-	ConfiguringCasting: "配役設定中",
-	ConfirmingCasting:  "配役設定結果の確認中",
+	RecruitingPlayers:     "参加者募集中",
+	ConfiguringCasting:    "配役設定中",
+	ConfirmingCasting:     "配役設定結果の確認中",
+	ConfiguringRegulation: "ルール設定中",
 }
 
 var (

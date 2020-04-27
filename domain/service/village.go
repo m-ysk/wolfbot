@@ -244,3 +244,26 @@ func (s VillageService) ConfigureCasting(
 		Casting: casting,
 	}, err
 }
+
+func (s VillageService) Confirm(
+	villageID model.VillageID,
+) (output.VillageConfirm, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.VillageConfirm{}, err
+	}
+
+	switch st := game.Village.Status; st {
+	case gamestatus.ConfirmingCasting:
+		game.Village.UpdateStatus(gamestatus.ConfiguringRegulation)
+		if err := s.gameRepository.Update(game); err != nil {
+			return output.VillageConfirm{}, err
+		}
+		return output.VillageConfirm{
+			PrevStatus: st,
+		}, nil
+
+	default:
+		return output.VillageConfirm{}, ErrorCommandUnauthorized
+	}
+}

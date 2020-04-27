@@ -5,26 +5,30 @@ import (
 	"time"
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
+	"wolfbot/domain/model/regulation"
 	"wolfbot/domain/model/role"
 	"wolfbot/lib/optlock"
 )
 
 type Village struct {
-	ID        VillageID
-	Status    gamestatus.GameStatus
-	Casting   role.Casting
-	Debug     debug.Mode
-	Version   optlock.Version
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID         VillageID
+	Status     gamestatus.GameStatus
+	Casting    role.Casting
+	Regulation regulation.Regulation
+	Debug      debug.Mode
+	Version    optlock.Version
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 func NewVillage(id VillageID, debug debug.Mode) Village {
 	return Village{
-		ID:      id,
-		Status:  gamestatus.RecruitingPlayers,
-		Debug:   debug,
-		Version: 0,
+		ID:         id,
+		Status:     gamestatus.RecruitingPlayers,
+		Casting:    make(role.Casting),
+		Regulation: regulation.NewByDefault(),
+		Debug:      debug,
+		Version:    0,
 	}
 }
 
