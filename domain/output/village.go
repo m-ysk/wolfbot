@@ -80,8 +80,36 @@ func (o VillageFinishRecruiting) Reply() string {
 
 設定可能な役職は、
 %v
-です。`,
+です。
+
+設定したい配役を以下のように発言してください。
+（残った人数には自動的に村人が設定されます）
+
+○占い師1人、霊能者1人、狩人1人、人狼2人、残りを村人に設定する場合の例
+
+占霊狩狼狼＠配役設定`,
 		o.Game.Players.NamesForHuman(),
 		role.AvailableRoleNames(),
+	)
+}
+
+type VillageConfigureCasting struct {
+	Casting role.Casting
+}
+
+func (o VillageConfigureCasting) Reply() string {
+	return fmt.Sprintf(`以下の配役を設定します。
+
+○配役
+%v
+
+この配役で決定する場合は、
+＠はい
+
+配役の設定をやり直す場合は、
+＠いいえ
+
+と発言してください`,
+		o.Casting.StringForHuman(),
 	)
 }

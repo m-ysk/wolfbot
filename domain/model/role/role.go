@@ -3,9 +3,10 @@ package role
 import "database/sql"
 
 type Role struct {
-	ID   ID
-	Name string
-	Abbr string
+	ID            ID
+	Name          string
+	Abbr          Abbr
+	WolfCountType WolfCountType
 }
 
 type Roles []Role
@@ -30,6 +31,16 @@ func Must(str string) Role {
 		panic(err)
 	}
 	return v
+}
+
+func NewFromAbbr(abbr Abbr) (Role, error) {
+	for _, v := range roleDefinitions {
+		if v.Abbr == abbr {
+			return v, nil
+		}
+	}
+
+	return Role{}, ErrorInvalidRoleAbbr
 }
 
 func (r Role) String() string {

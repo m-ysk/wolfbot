@@ -6,7 +6,7 @@ func AvailableRoleNames() string {
 		if i != 0 {
 			result += "\n"
 		}
-		result += v.Name + "（" + v.Abbr + "）"
+		result += v.Name + "（" + v.Abbr.String() + "）"
 	}
 	return result
 }

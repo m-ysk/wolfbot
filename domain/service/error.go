@@ -2,7 +2,7 @@ package service
 
 import (
 	"errors"
-	"wolfbot/domain/model/errorwr"
+	"wolfbot/lib/errorwr"
 )
 
 var (

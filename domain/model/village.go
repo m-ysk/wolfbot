@@ -5,12 +5,14 @@ import (
 	"time"
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
+	"wolfbot/domain/model/role"
 	"wolfbot/lib/optlock"
 )
 
 type Village struct {
 	ID        VillageID
 	Status    gamestatus.GameStatus
+	Casting   role.Casting
 	Debug     debug.Mode
 	Version   optlock.Version
 	CreatedAt time.Time
@@ -31,6 +33,13 @@ func (v *Village) UpdateStatus(status gamestatus.GameStatus) {
 		return
 	}
 	v.Status = status
+}
+
+func (v *Village) UpdateCasting(casting role.Casting) {
+	if v == nil {
+		return
+	}
+	v.Casting = casting
 }
 
 func (v *Village) IsDebug() bool {

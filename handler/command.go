@@ -45,6 +45,7 @@ const (
 	actionJoinVillage           action = "JoinVillage"
 	actionAddPlayersForDebug    action = "AddPlayersForDebug"
 	actionFinishRecruiting      action = "FinishRecruiting"
+	actionConfigureCasting      action = "ConfigureCasting"
 )
 
 var groupActionMap = map[string]action{
@@ -54,4 +55,5 @@ var groupActionMap = map[string]action{
 	"参加":      actionJoinVillage,
 	"デバッグ参加":  actionAddPlayersForDebug,
 	"募集終了":    actionFinishRecruiting,
+	"配役設定":    actionConfigureCasting,
 }

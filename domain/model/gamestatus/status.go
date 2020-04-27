@@ -8,18 +8,26 @@ import (
 type GameStatus string
 
 const (
-	RecruitingPlayers  GameStatus = "RecruitingPlayers"
+	// 参加者募集中
+	RecruitingPlayers GameStatus = "RecruitingPlayers"
+
+	// 配役設定中
 	ConfiguringCasting GameStatus = "ConfiguringCasting"
+
+	// 配役設定結果の確認中
+	ConfirmingCasting GameStatus = "ConfirmingCasting"
 )
 
 var stringToStatus = map[string]GameStatus{
 	string(RecruitingPlayers):  RecruitingPlayers,
 	string(ConfiguringCasting): ConfiguringCasting,
+	string(ConfirmingCasting):  ConfirmingCasting,
 }
 
 var statusToStringForHuman = map[GameStatus]string{
 	RecruitingPlayers:  "参加者募集中",
 	ConfiguringCasting: "配役設定中",
+	ConfirmingCasting:  "配役設定結果の確認中",
 }
 
 var (

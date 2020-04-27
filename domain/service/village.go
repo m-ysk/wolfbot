@@ -7,9 +7,10 @@ import (
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/debug"
-	"wolfbot/domain/model/errorwr"
 	"wolfbot/domain/model/gamestatus"
+	"wolfbot/domain/model/role"
 	"wolfbot/domain/output"
+	"wolfbot/lib/errorwr"
 )
 
 type VillageService struct {
@@ -209,4 +210,34 @@ func (s VillageService) FinishRecruiting(
 	}
 
 	return output.VillageFinishRecruiting{Game: game}, nil
+}
+
+func (s VillageService) ConfigureCasting(
+	villageID model.VillageID,
+	castingStr string,
+) (output.VillageConfigureCasting, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.VillageConfigureCasting{}, err
+	}
+
+	if game.Village.Status != gamestatus.ConfiguringCasting {
+		return output.VillageConfigureCasting{}, ErrorCommandUnauthorized
+	}
+
+	casting, err := role.ParseAndValidateCasting(castingStr)
+	if err != nil {
+		return output.VillageConfigureCasting{}, err
+	}
+
+	game.Village.UpdateCasting(casting)
+	game.Village.UpdateStatus(gamestatus.ConfirmingCasting)
+
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageConfigureCasting{}, err
+	}
+
+	return output.VillageConfigureCasting{
+		Casting: casting,
+	}, err
 }
