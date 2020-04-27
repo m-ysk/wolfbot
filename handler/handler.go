@@ -54,6 +54,9 @@ func (h MessageHandler) HandleGroupMessage(
 
 	case actionFinishRecruiting:
 		return h.villageService.FinishRecruiting(villageID)
+
+	case actionConfigureCasting:
+		return h.villageService.ConfigureCasting(villageID, cmd.Target)
 	}
 
 	_, err := h.userPlayerRelationService.GetPlayerIDByUserIDAndVillageID(
