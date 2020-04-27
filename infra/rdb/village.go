@@ -8,7 +8,7 @@ import (
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/domain/model/regulation"
-	"wolfbot/domain/model/role"
+	"wolfbot/domain/model/roles"
 	"wolfbot/lib/optlock"
 )
 
@@ -37,13 +37,13 @@ func MustVillage(village model.Village) Village {
 }
 
 func (v Village) MustModel() model.Village {
-	var casting role.Casting
+	var casting roles.Casting
 	if c := v.Casting.String; c != "" {
 		if err := json.Unmarshal([]byte(c), &casting); err != nil {
 			panic(err)
 		}
 	} else {
-		casting = make(role.Casting)
+		casting = make(roles.Casting)
 	}
 
 	var reg regulation.Regulation

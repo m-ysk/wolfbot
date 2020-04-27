@@ -1,4 +1,4 @@
-package role
+package roles
 
 var roleUnassigned = Role{
 	ID:            Unassigned,

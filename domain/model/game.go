@@ -2,7 +2,7 @@ package model
 
 import (
 	"wolfbot/domain/model/gamestatus"
-	"wolfbot/domain/model/role"
+	"wolfbot/domain/model/roles"
 	"wolfbot/lib/randutil"
 )
 
@@ -28,7 +28,7 @@ func (g *Game) assignRole() {
 	)
 
 	for i, v := range shuffledInts {
-		newRole := role.Must(roleIDs[v].String())
-		g.Players[i].Role = newRole
+		role := roles.Must(roleIDs[v].String())
+		g.Players[i].Role = role
 	}
 }

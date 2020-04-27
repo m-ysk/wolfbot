@@ -1,4 +1,4 @@
-package role
+package roles
 
 // 勝敗判定時に狼としてカウントするかどうか
 type WolfCountType string

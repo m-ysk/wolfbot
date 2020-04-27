@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/gamestatus"
-	"wolfbot/domain/model/role"
+	"wolfbot/domain/model/roles"
 )
 
 type VillageCheckStatus struct {
@@ -90,12 +90,12 @@ func (o VillageFinishRecruiting) Reply() string {
 
 占霊狩狼狼＠配役設定`,
 		o.Game.Players.NamesForHuman(),
-		role.AvailableRoleNames(),
+		roles.AvailableRoleNames(),
 	)
 }
 
 type VillageConfigureCasting struct {
-	Casting role.Casting
+	Casting roles.Casting
 }
 
 func (o VillageConfigureCasting) Reply() string {
@@ -196,7 +196,7 @@ func (o VillageReject) Reply() string {
 ○占い師1人、霊能者1人、狩人1人、人狼2人、残りを村人に設定する場合の例
 
 占霊狩狼狼＠配役設定`,
-			role.AvailableRoleNames())
+			roles.AvailableRoleNames())
 
 	default:
 		// Unreachable

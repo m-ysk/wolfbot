@@ -1,4 +1,4 @@
-package role
+package roles
 
 func AvailableRoleNames() string {
 	var result string

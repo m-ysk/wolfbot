@@ -6,14 +6,14 @@ import (
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/domain/model/regulation"
-	"wolfbot/domain/model/role"
+	"wolfbot/domain/model/roles"
 	"wolfbot/lib/optlock"
 )
 
 type Village struct {
 	ID         VillageID
 	Status     gamestatus.GameStatus
-	Casting    role.Casting
+	Casting    roles.Casting
 	Regulation regulation.Regulation
 	Day        int
 	Debug      debug.Mode
@@ -26,7 +26,7 @@ func NewVillage(id VillageID, debug debug.Mode) Village {
 	return Village{
 		ID:         id,
 		Status:     gamestatus.RecruitingPlayers,
-		Casting:    make(role.Casting),
+		Casting:    make(roles.Casting),
 		Regulation: regulation.NewByDefault(),
 		Day:        0,
 		Debug:      debug,
@@ -41,7 +41,7 @@ func (v *Village) UpdateStatus(status gamestatus.GameStatus) {
 	v.Status = status
 }
 
-func (v *Village) UpdateCasting(casting role.Casting) {
+func (v *Village) UpdateCasting(casting roles.Casting) {
 	if v == nil {
 		return
 	}

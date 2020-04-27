@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 	"wolfbot/domain/model/lifestatus"
-	"wolfbot/domain/model/role"
+	"wolfbot/domain/model/roles"
 	"wolfbot/lib/optlock"
 )
 
@@ -13,7 +13,7 @@ type Player struct {
 	VillageID  VillageID
 	Name       PlayerName
 	LifeStatus lifestatus.LifeStatus
-	Role       role.Role
+	Role       roles.Role
 	Version    optlock.Version
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
@@ -29,7 +29,7 @@ func NewPlayer(
 		VillageID:  villageID,
 		Name:       name,
 		LifeStatus: lifestatus.Alive,
-		Role:       role.Must(role.Unassigned.String()),
+		Role:       roles.Must(roles.Unassigned.String()),
 		Version:    0,
 	}
 }
@@ -51,7 +51,7 @@ func (ps Players) Count() int {
 	return len(ps)
 }
 
-func (ps Players) CountRole(r role.ID) int {
+func (ps Players) CountRole(r roles.ID) int {
 	count := 0
 	for _, v := range ps {
 		if v.Role.ID == r {

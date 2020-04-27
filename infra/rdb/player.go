@@ -5,7 +5,7 @@ import (
 	"time"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/lifestatus"
-	"wolfbot/domain/model/role"
+	"wolfbot/domain/model/roles"
 	"wolfbot/lib/optlock"
 )
 
@@ -39,7 +39,7 @@ func (p Player) MustModel() model.Player {
 		VillageID:  model.VillageID(p.VillageID.String),
 		Name:       model.PlayerName(p.Name.String),
 		LifeStatus: lifestatus.Must(p.LifeStatus.String),
-		Role:       role.Must(p.Role.String),
+		Role:       roles.Must(p.Role.String),
 		Version:    optlock.Version(p.Version.Int64),
 		CreatedAt:  p.CreatedAt,
 		UpdatedAt:  p.UpdatedAt,

@@ -8,7 +8,7 @@ import (
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
-	"wolfbot/domain/model/role"
+	"wolfbot/domain/model/roles"
 	"wolfbot/domain/output"
 	"wolfbot/lib/errorwr"
 )
@@ -225,7 +225,7 @@ func (s VillageService) ConfigureCasting(
 		return output.VillageConfigureCasting{}, ErrorCommandUnauthorized
 	}
 
-	casting, err := role.ParseAndValidateCasting(
+	casting, err := roles.ParseAndValidateCasting(
 		castingStr,
 		game.Players.Count(),
 	)
