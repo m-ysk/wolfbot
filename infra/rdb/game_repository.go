@@ -41,7 +41,7 @@ func (repo gameRepository) Update(game model.Game) error {
 	for _, p := range players {
 		result := tx.Model(&Player{}).Where(map[string]interface{}{
 			"village_id": p.VillageID.String,
-			"version":    p.Version.Int64,
+			"version":    p.CurrentVersion().Int64,
 		}).Omit("id").Updates(&p)
 		if err := result.Error; err != nil {
 			Rollback(tx)
