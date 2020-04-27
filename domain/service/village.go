@@ -225,7 +225,10 @@ func (s VillageService) ConfigureCasting(
 		return output.VillageConfigureCasting{}, ErrorCommandUnauthorized
 	}
 
-	casting, err := role.ParseAndValidateCasting(castingStr)
+	casting, err := role.ParseAndValidateCasting(
+		castingStr,
+		game.Players.Count(),
+	)
 	if err != nil {
 		return output.VillageConfigureCasting{}, err
 	}
