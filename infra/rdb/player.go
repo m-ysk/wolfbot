@@ -2,6 +2,7 @@ package rdb
 
 import (
 	"database/sql"
+	"time"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/lifestatus"
 	"wolfbot/domain/model/role"
@@ -16,8 +17,8 @@ type Player struct {
 	LifeStatus sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Role       sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Version    sql.NullInt64  `sql:"not null;default:0"`
-	CreatedAt  sql.NullInt64  `sql:"not null;default:0"`
-	UpdatedAt  sql.NullInt64  `sql:"not null;default:0"`
+	CreatedAt  time.Time      `sql:"not null"`
+	UpdatedAt  time.Time      `sql:"not null"`
 }
 
 func NewPlayer(player model.Player) Player {
@@ -28,8 +29,8 @@ func NewPlayer(player model.Player) Player {
 		LifeStatus: player.LifeStatus.NullString(),
 		Role:       player.Role.NullString(),
 		Version:    player.Version.NullInt64WithIncrement(),
-		CreatedAt:  player.CreatedAt.NullInt64(),
-		UpdatedAt:  player.UpdatedAt.NullInt64(),
+		CreatedAt:  time.Unix(player.CreatedAt.Int64(), 0),
+		UpdatedAt:  time.Unix(player.UpdatedAt.Int64(), 0),
 	}
 }
 
@@ -41,8 +42,8 @@ func (p Player) MustModel() model.Player {
 		LifeStatus: lifestatus.Must(p.LifeStatus.String),
 		Role:       role.Must(p.Role.String),
 		Version:    optlock.Version(p.Version.Int64),
-		CreatedAt:  unixtime.UnixTime(p.CreatedAt.Int64),
-		UpdatedAt:  unixtime.UnixTime(p.UpdatedAt.Int64),
+		CreatedAt:  unixtime.UnixTime(p.CreatedAt.Unix()),
+		UpdatedAt:  unixtime.UnixTime(p.UpdatedAt.Unix()),
 	}
 }
 

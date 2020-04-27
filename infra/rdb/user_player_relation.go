@@ -2,6 +2,7 @@ package rdb
 
 import (
 	"database/sql"
+	"time"
 	"wolfbot/domain/model"
 	"wolfbot/lib/optlock"
 	"wolfbot/lib/unixtime"
@@ -13,8 +14,8 @@ type UserPlayerRelation struct {
 	VillageID  sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	PlayerID   sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Version    sql.NullInt64  `sql:"not null;default:0"`
-	CreatedAt  sql.NullInt64  `sql:"not null;default:0"`
-	UpdatedAt  sql.NullInt64  `sql:"not null;default:0"`
+	CreatedAt  time.Time      `sql:"not null"`
+	UpdatedAt  time.Time      `sql:"not null"`
 }
 
 func NewUserPlayerRelation(relation model.UserPlayerRelation) UserPlayerRelation {
@@ -24,8 +25,8 @@ func NewUserPlayerRelation(relation model.UserPlayerRelation) UserPlayerRelation
 		PlayerName: relation.PlayerName.NullString(),
 		PlayerID:   relation.PlayerID.NullString(),
 		Version:    relation.Version.NullInt64WithIncrement(),
-		CreatedAt:  relation.CreatedAt.NullInt64(),
-		UpdatedAt:  relation.UpdatedAt.NullInt64(),
+		CreatedAt:  time.Unix(relation.CreatedAt.Int64(), 0),
+		UpdatedAt:  time.Unix(relation.UpdatedAt.Int64(), 0),
 	}
 }
 
@@ -36,8 +37,8 @@ func (r UserPlayerRelation) MustModel() model.UserPlayerRelation {
 		PlayerName: model.MustPlayerName(r.PlayerName.String),
 		PlayerID:   model.PlayerID(r.PlayerID.String),
 		Version:    optlock.Version(r.Version.Int64),
-		CreatedAt:  unixtime.UnixTime(r.CreatedAt.Int64),
-		UpdatedAt:  unixtime.UnixTime(r.UpdatedAt.Int64),
+		CreatedAt:  unixtime.UnixTime(r.CreatedAt.Unix()),
+		UpdatedAt:  unixtime.UnixTime(r.UpdatedAt.Unix()),
 	}
 }
 
