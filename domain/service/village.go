@@ -245,6 +245,29 @@ func (s VillageService) ConfigureCasting(
 	}, err
 }
 
+func (s VillageService) FinishConfiguringRegulation(
+	villageID model.VillageID,
+) (output.VillageStartGame, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.VillageStartGame{}, err
+	}
+
+	if game.Village.Status != gamestatus.ConfiguringRegulation {
+		return output.VillageStartGame{}, ErrorCommandUnauthorized
+	}
+
+	game.Start()
+
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageStartGame{}, err
+	}
+
+	return output.VillageStartGame{
+		WolfCount: game.Players.WolfCount(),
+	}, nil
+}
+
 func (s VillageService) Confirm(
 	villageID model.VillageID,
 ) (output.VillageConfirm, error) {

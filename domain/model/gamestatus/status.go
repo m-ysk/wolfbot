@@ -19,6 +19,12 @@ const (
 
 	// ルール設定中
 	ConfiguringRegulation GameStatus = "ConfiguringRegulation"
+
+	// 役職確認中
+	CheckingRole GameStatus = "CheckingRole"
+
+	// 昼
+	Daytime GameStatus = "Daytime"
 )
 
 var stringToStatus = map[string]GameStatus{
@@ -26,6 +32,8 @@ var stringToStatus = map[string]GameStatus{
 	string(ConfiguringCasting):    ConfiguringCasting,
 	string(ConfirmingCasting):     ConfirmingCasting,
 	string(ConfiguringRegulation): ConfiguringRegulation,
+	string(CheckingRole):          CheckingRole,
+	string(Daytime):               Daytime,
 }
 
 var statusToStringForHuman = map[GameStatus]string{
@@ -33,6 +41,8 @@ var statusToStringForHuman = map[GameStatus]string{
 	ConfiguringCasting:    "配役設定中",
 	ConfirmingCasting:     "配役設定結果の確認中",
 	ConfiguringRegulation: "ルール設定中",
+	CheckingRole:          "役職確認中",
+	Daytime:               "昼（議論と投票）",
 }
 
 var (

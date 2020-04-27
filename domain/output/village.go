@@ -115,6 +115,31 @@ func (o VillageConfigureCasting) Reply() string {
 	)
 }
 
+type VillageStartGame struct {
+	WolfCount int
+}
+
+func (o VillageStartGame) Reply() string {
+	return fmt.Sprintf(`ある朝のこと、村の村長が無残に喰い殺された姿で発見されました。
+どうやら、村人の中に恐ろしい人狼が%v匹、紛れ込んでいるようです。
+村人に成りすましている人狼を突き止め、処刑しましょう。
+処刑対象は、村人の投票により決定します。
+村で決めた期限までに、処刑すべき人物の名前を投票してください。
+投票は、【わたしへの個別トーク】にて、
+
+（投票先プレイヤー名）＠投票
+
+と発言してください。
+
+投票の締切時間になったら、【このグループ】にて、
+
+＠投票終了
+
+と発言してください。`,
+		o.WolfCount,
+	)
+}
+
 type VillageConfirm struct {
 	PrevStatus gamestatus.GameStatus
 }

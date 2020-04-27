@@ -79,6 +79,20 @@ func validateCasting(casting Casting) error {
 	return nil
 }
 
+// Slice は配役に含まれる役職のIDを人数分並べたスライスを返す
+// 役職の並び順は順序保証される
+func (c Casting) RoleIDs() IDs {
+	var result IDs
+	for _, role := range roleDefinitions {
+		if num, ok := c[role.ID]; ok {
+			for i := 0; i < num; i++ {
+				result = append(result, role.ID)
+			}
+		}
+	}
+	return result
+}
+
 func (c Casting) MustNullString() sql.NullString {
 	b, err := json.Marshal(&c)
 	if err != nil {

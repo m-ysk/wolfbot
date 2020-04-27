@@ -51,6 +51,26 @@ func (ps Players) Count() int {
 	return len(ps)
 }
 
+func (ps Players) CountRole(r role.ID) int {
+	count := 0
+	for _, v := range ps {
+		if v.Role.ID == r {
+			count++
+		}
+	}
+	return count
+}
+
+func (ps Players) WolfCount() int {
+	count := 0
+	for _, v := range ps {
+		if v.Role.WolfCountType.WolfCountable() {
+			count++
+		}
+	}
+	return count
+}
+
 type PlayerID string
 
 func (id PlayerID) String() string {

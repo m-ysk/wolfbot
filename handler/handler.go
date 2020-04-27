@@ -58,6 +58,9 @@ func (h MessageHandler) HandleGroupMessage(
 	case actionConfigureCasting:
 		return h.villageService.ConfigureCasting(villageID, cmd.Target)
 
+	case actionFinishConfiguringRegulation:
+		return h.villageService.FinishConfiguringRegulation(villageID)
+
 	case actionConfirm:
 		return h.villageService.Confirm(villageID)
 

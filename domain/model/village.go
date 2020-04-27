@@ -15,6 +15,7 @@ type Village struct {
 	Status     gamestatus.GameStatus
 	Casting    role.Casting
 	Regulation regulation.Regulation
+	Day        int
 	Debug      debug.Mode
 	Version    optlock.Version
 	CreatedAt  time.Time
@@ -27,6 +28,7 @@ func NewVillage(id VillageID, debug debug.Mode) Village {
 		Status:     gamestatus.RecruitingPlayers,
 		Casting:    make(role.Casting),
 		Regulation: regulation.NewByDefault(),
+		Day:        0,
 		Debug:      debug,
 		Version:    0,
 	}

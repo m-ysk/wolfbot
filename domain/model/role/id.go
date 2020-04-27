@@ -4,6 +4,8 @@ import "errors"
 
 type ID string
 
+type IDs []ID
+
 const (
 	Unassigned ID = "Unassigned"
 	Villager   ID = "Villager"
