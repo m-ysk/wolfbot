@@ -42,7 +42,10 @@ func parseCasting(str string, total int) (Casting, error) {
 	return result, nil
 }
 
-var ErrorWolfCountExceeding = errors.New("wolf_count_exceeding")
+var (
+	ErrorWolfCountZero      = errors.New("wolf_count_zero")
+	ErrorWolfCountExceeding = errors.New("wolf_count_exceeding")
+)
 
 func validateCasting(casting Casting) error {
 	var total, wolf int
@@ -58,11 +61,18 @@ func validateCasting(casting Casting) error {
 		}
 	}
 
+	if wolf == 0 {
+		return errorwr.New(
+			ErrorWolfCountZero,
+			"人狼が設定されていません。最低でも1人の人狼またはその他の人狼系役職を設定してください",
+		)
+	}
+
 	maxWolf := (total - 1) / 2
 	if wolf > maxWolf {
 		return errorwr.New(
 			ErrorWolfCountExceeding,
-			fmt.Sprintf("人狼の数が多すぎます。人狼は%v人以下でなければなりません", maxWolf),
+			fmt.Sprintf("人狼の数が多すぎます。人狼系役職の合計は%v人以下に設定してください", maxWolf),
 		)
 	}
 
