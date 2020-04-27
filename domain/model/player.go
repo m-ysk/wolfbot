@@ -2,10 +2,10 @@ package model
 
 import (
 	"database/sql"
+	"time"
 	"wolfbot/domain/model/lifestatus"
 	"wolfbot/domain/model/role"
 	"wolfbot/lib/optlock"
-	"wolfbot/lib/unixtime"
 )
 
 type Player struct {
@@ -15,8 +15,8 @@ type Player struct {
 	LifeStatus lifestatus.LifeStatus
 	Role       role.Role
 	Version    optlock.Version
-	CreatedAt  unixtime.UnixTime
-	UpdatedAt  unixtime.UnixTime
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 func NewPlayer(
@@ -31,8 +31,6 @@ func NewPlayer(
 		LifeStatus: lifestatus.Alive,
 		Role:       role.Must(role.Unassigned.String()),
 		Version:    0,
-		CreatedAt:  unixtime.Now(),
-		UpdatedAt:  unixtime.Now(),
 	}
 }
 

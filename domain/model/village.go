@@ -2,10 +2,10 @@ package model
 
 import (
 	"database/sql"
+	"time"
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/lib/optlock"
-	"wolfbot/lib/unixtime"
 )
 
 type Village struct {
@@ -13,18 +13,16 @@ type Village struct {
 	Status    gamestatus.GameStatus
 	Debug     debug.Mode
 	Version   optlock.Version
-	CreatedAt unixtime.UnixTime
-	UpdatedAt unixtime.UnixTime
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func NewVillage(id VillageID, debug debug.Mode) Village {
 	return Village{
-		ID:        id,
-		Status:    gamestatus.RecruitingPlayers,
-		Debug:     debug,
-		Version:   0,
-		CreatedAt: unixtime.Now(),
-		UpdatedAt: unixtime.Now(),
+		ID:      id,
+		Status:  gamestatus.RecruitingPlayers,
+		Debug:   debug,
+		Version: 0,
 	}
 }
 
@@ -33,7 +31,6 @@ func (v *Village) UpdateStatus(status gamestatus.GameStatus) {
 		return
 	}
 	v.Status = status
-	v.updateTimestamp()
 }
 
 func (v *Village) IsDebug() bool {
@@ -41,13 +38,6 @@ func (v *Village) IsDebug() bool {
 		return false
 	}
 	return v.Debug == debug.Debug
-}
-
-func (v *Village) updateTimestamp() {
-	if v == nil {
-		return
-	}
-	v.UpdatedAt = unixtime.Now()
 }
 
 type VillageID string

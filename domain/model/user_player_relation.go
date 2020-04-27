@@ -1,8 +1,8 @@
 package model
 
 import (
+	"time"
 	"wolfbot/lib/optlock"
-	"wolfbot/lib/unixtime"
 )
 
 type UserPlayerRelation struct {
@@ -11,8 +11,8 @@ type UserPlayerRelation struct {
 	PlayerName PlayerName
 	PlayerID   PlayerID
 	Version    optlock.Version
-	CreatedAt  unixtime.UnixTime
-	UpdatedAt  unixtime.UnixTime
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 func NewUserPlayerRelation(
@@ -27,8 +27,6 @@ func NewUserPlayerRelation(
 		PlayerName: playerName,
 		PlayerID:   playerID,
 		Version:    0,
-		CreatedAt:  unixtime.Now(),
-		UpdatedAt:  unixtime.Now(),
 	}
 }
 

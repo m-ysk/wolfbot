@@ -5,7 +5,6 @@ import (
 	"time"
 	"wolfbot/domain/model"
 	"wolfbot/lib/optlock"
-	"wolfbot/lib/unixtime"
 )
 
 type UserPlayerRelation struct {
@@ -25,8 +24,8 @@ func NewUserPlayerRelation(relation model.UserPlayerRelation) UserPlayerRelation
 		PlayerName: relation.PlayerName.NullString(),
 		PlayerID:   relation.PlayerID.NullString(),
 		Version:    relation.Version.NullInt64WithIncrement(),
-		CreatedAt:  time.Unix(relation.CreatedAt.Int64(), 0),
-		UpdatedAt:  time.Unix(relation.UpdatedAt.Int64(), 0),
+		CreatedAt:  relation.CreatedAt,
+		UpdatedAt:  relation.UpdatedAt,
 	}
 }
 
@@ -37,8 +36,8 @@ func (r UserPlayerRelation) MustModel() model.UserPlayerRelation {
 		PlayerName: model.MustPlayerName(r.PlayerName.String),
 		PlayerID:   model.PlayerID(r.PlayerID.String),
 		Version:    optlock.Version(r.Version.Int64),
-		CreatedAt:  unixtime.UnixTime(r.CreatedAt.Unix()),
-		UpdatedAt:  unixtime.UnixTime(r.UpdatedAt.Unix()),
+		CreatedAt:  r.CreatedAt,
+		UpdatedAt:  r.UpdatedAt,
 	}
 }
 

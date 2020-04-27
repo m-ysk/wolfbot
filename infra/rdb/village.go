@@ -7,7 +7,6 @@ import (
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
 	"wolfbot/lib/optlock"
-	"wolfbot/lib/unixtime"
 )
 
 type Village struct {
@@ -25,8 +24,8 @@ func NewVillage(village model.Village) Village {
 		Status:    village.Status.NullString(),
 		Debug:     village.Debug.NullString(),
 		Version:   village.Version.NullInt64WithIncrement(),
-		CreatedAt: time.Unix(village.CreatedAt.Int64(), 0),
-		UpdatedAt: time.Unix(village.UpdatedAt.Int64(), 0),
+		CreatedAt: village.CreatedAt,
+		UpdatedAt: village.UpdatedAt,
 	}
 }
 
@@ -36,8 +35,8 @@ func (v Village) MustModel() model.Village {
 		Status:    gamestatus.Must(v.Status.String),
 		Debug:     debug.Must(v.Debug.String),
 		Version:   optlock.Version(v.Version.Int64),
-		CreatedAt: unixtime.UnixTime(v.CreatedAt.Unix()),
-		UpdatedAt: unixtime.UnixTime(v.UpdatedAt.Unix()),
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
 	}
 }
 

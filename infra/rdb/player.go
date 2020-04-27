@@ -7,7 +7,6 @@ import (
 	"wolfbot/domain/model/lifestatus"
 	"wolfbot/domain/model/role"
 	"wolfbot/lib/optlock"
-	"wolfbot/lib/unixtime"
 )
 
 type Player struct {
@@ -29,8 +28,8 @@ func NewPlayer(player model.Player) Player {
 		LifeStatus: player.LifeStatus.NullString(),
 		Role:       player.Role.NullString(),
 		Version:    player.Version.NullInt64WithIncrement(),
-		CreatedAt:  time.Unix(player.CreatedAt.Int64(), 0),
-		UpdatedAt:  time.Unix(player.UpdatedAt.Int64(), 0),
+		CreatedAt:  player.CreatedAt,
+		UpdatedAt:  player.UpdatedAt,
 	}
 }
 
@@ -42,8 +41,8 @@ func (p Player) MustModel() model.Player {
 		LifeStatus: lifestatus.Must(p.LifeStatus.String),
 		Role:       role.Must(p.Role.String),
 		Version:    optlock.Version(p.Version.Int64),
-		CreatedAt:  unixtime.UnixTime(p.CreatedAt.Unix()),
-		UpdatedAt:  unixtime.UnixTime(p.UpdatedAt.Unix()),
+		CreatedAt:  p.CreatedAt,
+		UpdatedAt:  p.UpdatedAt,
 	}
 }
 
