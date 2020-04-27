@@ -35,8 +35,12 @@ func NewVillage(village model.Village) Village {
 
 func (v Village) MustModel() model.Village {
 	var casting role.Casting
-	if err := json.Unmarshal([]byte(v.Casting.String), &casting); err != nil {
-		panic(err)
+	if v.Casting.String != "" {
+		if err := json.Unmarshal([]byte(v.Casting.String), &casting); err != nil {
+			panic(err)
+		}
+	} else {
+		casting = make(role.Casting)
 	}
 
 	return model.Village{
