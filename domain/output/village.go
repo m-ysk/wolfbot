@@ -182,14 +182,10 @@ func (o VillageFinishVoting) Reply() string {
 	)
 }
 
-type VillageConfirm struct {
-	PrevStatus gamestatus.GameStatus
-}
+type VillageConfirmCasting struct{}
 
-func (o VillageConfirm) Reply() string {
-	switch st := o.PrevStatus; st {
-	case gamestatus.ConfirmingCasting:
-		return fmt.Sprintf(`配役を設定しました。
+func (o VillageConfirmCasting) Reply() string {
+	return `配役を設定しました。
 続いて、ルールを設定します。
 
 ルールはデフォルトで以下のように設定されています。
@@ -209,12 +205,53 @@ func (o VillageConfirm) Reply() string {
 
 ＠設定終了
 
-と入力してください。`)
+と入力してください。`
+}
 
-	default:
-		// Unreachable
-		return ""
+type VillageConfirmFinishVoting struct {
+	Revoting       bool
+	ExecutedPlayer model.PlayerName
+	VoteDetail     model.VoteDetail
+}
+
+func (o VillageConfirmFinishVoting) Reply() string {
+	if o.Revoting {
+		return fmt.Sprintf(`投票結果が同数のため、再投票を行います。
+
+各プレイヤーは、もう一度、【わたしへの個別トーク】にて
+（投票先プレイヤー名）＠投票
+と入力して再投票を行ってください。
+（再投票を行わなかったプレイヤーは、前回と同じ投票先に投票したものとみなされます）
+
+全員の再投票が終わったら、【このグループ】にて、
+＠投票終了
+と発言してください。
+
+○投票結果
+%v`,
+			o.VoteDetail.StringForHuman(),
+		)
 	}
+
+	return fmt.Sprintf(`投票の結果、%vさんが処刑されました。
+
+○投票結果
+%v
+
+処刑を行ったにも関わらず、恐ろしい夜はやってきます。
+
+能力を持っているプレイヤーは、村で決めた時間までに、役職を実行してください。
+
+役職の実行方法が分からないプレイヤーは、【わたしへの個別トーク】にて、
+＠確認
+と入力してください。
+
+村で決めた時間になったら、【このグループ】にて、
+＠夜明け
+と入力してください`,
+		o.ExecutedPlayer.String(),
+		o.VoteDetail.StringForHuman(),
+	)
 }
 
 type VillageReject struct {

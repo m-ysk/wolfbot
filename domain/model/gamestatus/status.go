@@ -28,6 +28,9 @@ const (
 
 	// 昼を終了するか確認中
 	ConfirmingFinishDaytime GameStatus = "ConfirmingFinishDaytime"
+
+	// 夜
+	Nighttime GameStatus = "Nighttime"
 )
 
 var stringToStatus = map[string]GameStatus{
@@ -38,6 +41,7 @@ var stringToStatus = map[string]GameStatus{
 	string(CheckingRole):            CheckingRole,
 	string(Daytime):                 Daytime,
 	string(ConfirmingFinishDaytime): ConfirmingFinishDaytime,
+	string(Nighttime):               Nighttime,
 }
 
 var statusToStringForHuman = map[GameStatus]string{
@@ -48,6 +52,7 @@ var statusToStringForHuman = map[GameStatus]string{
 	CheckingRole:            "役職確認中",
 	Daytime:                 "昼（議論と投票）",
 	ConfirmingFinishDaytime: "昼の終了確認中",
+	Nighttime:               "夜（能力の実行）",
 }
 
 var (

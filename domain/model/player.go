@@ -49,12 +49,27 @@ func (p *Player) Acted() {
 	p.ActionStatus = actionstatus.Acted
 }
 
+func (p *Player) Unacted() {
+	if p == nil {
+		return
+	}
+	p.ActionStatus = actionstatus.Unacted
+	p.ActTo = ""
+}
+
 func (p *Player) Vote(target PlayerID) {
 	if p == nil {
 		return
 	}
 	p.VoteStatus = votestatus.Voted
 	p.VoteTo = target
+}
+
+func (p *Player) Kill() {
+	if p == nil {
+		return
+	}
+	p.LifeStatus = lifestatus.Dead
 }
 
 type Players []Player
@@ -132,7 +147,17 @@ func (ps Players) FindByName(name PlayerName) (Player, bool) {
 	return Player{}, false
 }
 
+func (ps Players) UpdatePlayer(player Player) {
+	for i, v := range ps {
+		if v.ID == player.ID {
+			ps[i] = player
+		}
+	}
+}
+
 type PlayerID string
+
+type PlayerIDs []PlayerID
 
 func (id PlayerID) String() string {
 	return string(id)

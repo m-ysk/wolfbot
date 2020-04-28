@@ -6,6 +6,6 @@ const (
 	// 再投票
 	TieVoteRevoting TieVote = "Revoting"
 
-	// 引き分け
-	TieVoteDraw TieVote = "Draw"
+	// 最多得票者をランダムで処刑
+	TieVoteRandomExecution TieVote = "RandomExecution"
 )

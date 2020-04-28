@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"time"
 	"wolfbot/domain/interfaces"
@@ -326,25 +327,60 @@ func (s VillageService) FinishVoting(
 
 func (s VillageService) Confirm(
 	villageID model.VillageID,
-) (output.VillageConfirm, error) {
+) (output.Interface, error) {
 	game, err := s.gameRepository.FindByVillageID(villageID)
 	if err != nil {
-		return output.VillageConfirm{}, err
+		return nil, err
 	}
 
-	switch st := game.Village.Status; st {
+	switch game.Village.Status {
 	case gamestatus.ConfirmingCasting:
-		game.Village.UpdateStatus(gamestatus.ConfiguringRegulation)
-		if err := s.gameRepository.Update(game); err != nil {
-			return output.VillageConfirm{}, err
-		}
-		return output.VillageConfirm{
-			PrevStatus: st,
-		}, nil
+		return s.confirmCasting(game)
+
+	case gamestatus.ConfirmingFinishDaytime:
+		return s.confirmFinishVoting(game)
 
 	default:
-		return output.VillageConfirm{}, ErrorCommandUnauthorized
+		return nil, ErrorCommandUnauthorized
 	}
+}
+
+func (s VillageService) confirmCasting(
+	game model.Game,
+) (output.VillageConfirmCasting, error) {
+	game.Village.UpdateStatus(gamestatus.ConfiguringRegulation)
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageConfirmCasting{}, err
+	}
+	return output.VillageConfirmCasting{}, nil
+}
+
+func (s VillageService) confirmFinishVoting(
+	game model.Game,
+) (output.VillageConfirmFinishVoting, error) {
+	randomInt := func(n int) int {
+		return rand.Intn(n)
+	}
+	result, err := game.Execute(randomInt)
+	if err != nil {
+		return output.VillageConfirmFinishVoting{}, err
+	}
+
+	if result.Revoting {
+		game.Village.UpdateStatus(gamestatus.Daytime)
+	} else {
+		game.ProceedToNighttime()
+	}
+
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageConfirmFinishVoting{}, err
+	}
+
+	return output.VillageConfirmFinishVoting{
+		Revoting:       result.Revoting,
+		ExecutedPlayer: result.ExecutedPlayer.Name,
+		VoteDetail:     game.VoteDetail(),
+	}, nil
 }
 
 func (s VillageService) Reject(
