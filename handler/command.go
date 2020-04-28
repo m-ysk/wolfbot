@@ -68,6 +68,7 @@ const (
 
 const (
 	actionCheckUserState action = "CheckUserState"
+	actionVote           action = "Vote"
 )
 
 var groupActionMap = map[string]action{
@@ -87,4 +88,5 @@ var groupActionMap = map[string]action{
 
 var userActionMap = map[string]action{
 	"確認": actionCheckUserState,
+	"投票": actionVote,
 }

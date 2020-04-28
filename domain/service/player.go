@@ -86,3 +86,31 @@ func (s PlayerService) checkStateForWolf(
 		return output.PlayerCheckState{}, nil
 	}
 }
+
+func (s PlayerService) Vote(
+	playerID model.PlayerID,
+	villageID model.VillageID,
+	target string,
+) (output.PlayerVote, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.PlayerVote{}, err
+	}
+
+	if game.Village.Status != gamestatus.Daytime {
+		return output.PlayerVote{}, ErrorCommandUnauthorized
+	}
+
+	player, _ := game.Players.FindByID(playerID)
+	targetPlayer, _ := game.Players.FindByName(model.PlayerName(target))
+
+	player.Vote(targetPlayer.ID)
+
+	if err := s.playerRepository.Update(player); err != nil {
+		return output.PlayerVote{}, err
+	}
+
+	return output.PlayerVote{
+		Target: targetPlayer.Name,
+	}, nil
+}

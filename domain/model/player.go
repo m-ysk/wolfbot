@@ -6,6 +6,7 @@ import (
 	"wolfbot/domain/model/actionstatus"
 	"wolfbot/domain/model/lifestatus"
 	"wolfbot/domain/model/roles"
+	"wolfbot/domain/model/votestatus"
 	"wolfbot/lib/optlock"
 )
 
@@ -17,6 +18,8 @@ type Player struct {
 	Role         roles.Role
 	ActionStatus actionstatus.ActionStatus
 	ActTo        PlayerID
+	VoteStatus   votestatus.VoteStatus
+	VoteTo       PlayerID
 	Version      optlock.Version
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
@@ -34,6 +37,7 @@ func NewPlayer(
 		LifeStatus:   lifestatus.Alive,
 		Role:         roles.Must(roles.Unassigned.String()),
 		ActionStatus: actionstatus.Unacted,
+		VoteStatus:   votestatus.Unvoted,
 		Version:      0,
 	}
 }
@@ -43,6 +47,14 @@ func (p *Player) Acted() {
 		return
 	}
 	p.ActionStatus = actionstatus.Acted
+}
+
+func (p *Player) Vote(target PlayerID) {
+	if p == nil {
+		return
+	}
+	p.VoteStatus = votestatus.Voted
+	p.VoteTo = target
 }
 
 type Players []Player
@@ -95,6 +107,15 @@ func (ps Players) CountUnacted() int {
 func (ps Players) FindByID(id PlayerID) (Player, bool) {
 	for _, v := range ps {
 		if v.ID == id {
+			return v, true
+		}
+	}
+	return Player{}, false
+}
+
+func (ps Players) FindByName(name PlayerName) (Player, bool) {
+	for _, v := range ps {
+		if v.Name == name {
 			return v, true
 		}
 	}

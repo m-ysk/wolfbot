@@ -119,6 +119,9 @@ func (h MessageHandler) HandleUserMessage(
 	switch cmd.Action {
 	case actionCheckUserState:
 		return h.playerService.CheckState(playerID, villageID)
+
+	case actionVote:
+		return h.playerService.Vote(playerID, villageID, cmd.Target)
 	}
 
 	panic("unreachable")

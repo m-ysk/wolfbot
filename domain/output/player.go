@@ -2,6 +2,7 @@ package output
 
 import (
 	"fmt"
+	"wolfbot/domain/model"
 	"wolfbot/domain/model/roles"
 )
 
@@ -47,5 +48,19 @@ func (o PlayerCheckStateForWolf) Reply() string {
 %v`,
 		o.Role.Name,
 		otherWolves,
+	)
+}
+
+type PlayerVote struct {
+	Target model.PlayerName
+}
+
+func (o PlayerVote) Reply() string {
+	return fmt.Sprintf(`「%v」さんに投票しました。
+
+投票先を変更する場合は、もう一度、
+（投票先プレイヤー名）＠投票
+と入力してください`,
+		o.Target.String(),
 	)
 }

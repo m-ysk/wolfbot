@@ -7,6 +7,7 @@ import (
 	"wolfbot/domain/model/actionstatus"
 	"wolfbot/domain/model/lifestatus"
 	"wolfbot/domain/model/roles"
+	"wolfbot/domain/model/votestatus"
 	"wolfbot/lib/optlock"
 )
 
@@ -18,6 +19,8 @@ type Player struct {
 	Role         sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	ActionStatus sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	ActTo        sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
+	VoteStatus   sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
+	VoteTo       sql.NullString `sql:"type:varchar;size:255;not null;default:''"`
 	Version      sql.NullInt64  `sql:"not null;default:0"`
 	CreatedAt    time.Time      `sql:"not null"`
 	UpdatedAt    time.Time      `sql:"not null"`
@@ -32,6 +35,8 @@ func NewPlayer(player model.Player) Player {
 		Role:         player.Role.NullString(),
 		ActionStatus: player.ActionStatus.NullString(),
 		ActTo:        player.ActTo.NullString(),
+		VoteStatus:   player.VoteStatus.NullString(),
+		VoteTo:       player.VoteTo.NullString(),
 		Version:      player.Version.NullInt64WithIncrement(),
 		CreatedAt:    player.CreatedAt,
 		UpdatedAt:    player.UpdatedAt,
@@ -47,6 +52,8 @@ func (p Player) MustModel() model.Player {
 		Role:         roles.Must(p.Role.String),
 		ActionStatus: actionstatus.Must(p.ActionStatus.String),
 		ActTo:        model.PlayerID(p.ActTo.String),
+		VoteStatus:   votestatus.Must(p.VoteStatus.String),
+		VoteTo:       model.PlayerID(p.VoteTo.String),
 		Version:      optlock.Version(p.Version.Int64),
 		CreatedAt:    p.CreatedAt,
 		UpdatedAt:    p.UpdatedAt,
