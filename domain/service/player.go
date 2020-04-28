@@ -46,18 +46,19 @@ func (s PlayerService) CheckState(
 func (s PlayerService) checkState(
 	game model.Game,
 	player model.Player,
-) (output.PlayerCheckState, error) {
+) (output.Interface, error) {
 	switch game.Village.Status {
 	case gamestatus.CheckingRole:
 		player.Acted()
 		s.playerRepository.Update(player)
 
-		return output.PlayerCheckState{
+		return output.PlayerCheckStateInCheckingRole{
 			Role: player.Role,
 		}, nil
-	}
 
-	panic("unreachable")
+	default:
+		return output.PlayerCheckState{}, nil
+	}
 }
 
 func (s PlayerService) checkStateForWolf(

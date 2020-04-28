@@ -5,11 +5,17 @@ import (
 	"wolfbot/domain/model/roles"
 )
 
-type PlayerCheckState struct {
+type PlayerCheckState struct{}
+
+func (o PlayerCheckState) Reply() string {
+	return "現在はゲームの開始前です。グループトーク内でゲームの設定を行ってください"
+}
+
+type PlayerCheckStateInCheckingRole struct {
 	Role roles.Role
 }
 
-func (o PlayerCheckState) Reply() string {
+func (o PlayerCheckStateInCheckingRole) Reply() string {
 	return fmt.Sprintf(`○あなたの役職
 %v`,
 		o.Role.Name,
