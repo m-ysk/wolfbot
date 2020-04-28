@@ -72,10 +72,20 @@ func (ps Players) CountRole(r roles.ID) int {
 	return count
 }
 
-func (ps Players) WolfCount() int {
+func (ps Players) CountWolf() int {
 	count := 0
 	for _, v := range ps {
 		if v.Role.WolfCountType.WolfCountable() {
+			count++
+		}
+	}
+	return count
+}
+
+func (ps Players) CountUnacted() int {
+	count := 0
+	for _, v := range ps {
+		if v.ActionStatus == actionstatus.Unacted {
 			count++
 		}
 	}

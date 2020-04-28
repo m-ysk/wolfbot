@@ -11,12 +11,7 @@ type Game struct {
 	Players Players
 }
 
-func (g *Game) Start() {
-	g.assignRole()
-	g.Village.Status = gamestatus.CheckingRole
-}
-
-func (g *Game) assignRole() {
+func (g *Game) AssignRole() {
 	if g == nil {
 		return
 	}
@@ -31,4 +26,12 @@ func (g *Game) assignRole() {
 		role := roles.Must(roleIDs[v].String())
 		g.Players[i].Role = role
 	}
+}
+
+func (g *Game) Start() {
+	if g == nil {
+		return
+	}
+	g.Village.UpdateStatus(gamestatus.Daytime)
+	g.Village.Day = 1
 }

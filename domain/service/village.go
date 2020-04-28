@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 	"wolfbot/domain/interfaces"
@@ -247,14 +248,46 @@ func (s VillageService) ConfigureCasting(
 
 func (s VillageService) FinishConfiguringRegulation(
 	villageID model.VillageID,
+) (output.VillageFinishConfiguringRegulation, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.VillageFinishConfiguringRegulation{}, err
+	}
+
+	if game.Village.Status != gamestatus.ConfiguringRegulation {
+		return output.VillageFinishConfiguringRegulation{}, ErrorCommandUnauthorized
+	}
+
+	game.AssignRole()
+	game.Village.UpdateStatus(gamestatus.CheckingRole)
+
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageFinishConfiguringRegulation{}, err
+	}
+
+	return output.VillageFinishConfiguringRegulation{}, nil
+}
+
+func (s VillageService) StartGame(
+	villageID model.VillageID,
 ) (output.VillageStartGame, error) {
 	game, err := s.gameRepository.FindByVillageID(villageID)
 	if err != nil {
 		return output.VillageStartGame{}, err
 	}
 
-	if game.Village.Status != gamestatus.ConfiguringRegulation {
+	if game.Village.Status != gamestatus.CheckingRole {
 		return output.VillageStartGame{}, ErrorCommandUnauthorized
+	}
+
+	if unacted := game.Players.CountUnacted(); unacted != 0 {
+		return output.VillageStartGame{}, errorwr.New(
+			errors.New("unacted_player_remaining"),
+			fmt.Sprintf(
+				"まだ役職を確認していないプレイヤーが%v人います。全員が役職を確認するまでゲームを開始できません",
+				unacted,
+			),
+		)
 	}
 
 	game.Start()
@@ -264,7 +297,7 @@ func (s VillageService) FinishConfiguringRegulation(
 	}
 
 	return output.VillageStartGame{
-		WolfCount: game.Players.WolfCount(),
+		WolfCount: game.Players.CountWolf(),
 	}, nil
 }
 
