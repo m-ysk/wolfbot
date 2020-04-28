@@ -64,7 +64,7 @@ func (s PlayerService) checkState(
 func (s PlayerService) checkStateForWolf(
 	game model.Game,
 	player model.Player,
-) (output.PlayerCheckStateForWolf, error) {
+) (output.Interface, error) {
 	var otherWolfNames []string
 	for _, v := range game.Players {
 		if v.Role.WolfCountType.WolfCountable() && v.Name != player.Name {
@@ -81,7 +81,8 @@ func (s PlayerService) checkStateForWolf(
 			Role:           player.Role,
 			OtherWolfNames: otherWolfNames,
 		}, nil
-	}
 
-	panic("unreachable")
+	default:
+		return output.PlayerCheckState{}, nil
+	}
 }

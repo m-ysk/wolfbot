@@ -115,6 +115,19 @@ func (o VillageConfigureCasting) Reply() string {
 	)
 }
 
+type VillageFinishConfiguringRegulation struct{}
+
+func (o VillageFinishConfiguringRegulation) Reply() string {
+	return fmt.Sprintf(`各プレイヤーに役職を割り振りました。
+各プレイヤーは、【わたしへの個別トーク】にて、
+＠確認
+と入力して役職を確認してください。
+
+全員が役職を確認したら、【このグループ】にて、
+＠村開始
+と発言してください`)
+}
+
 type VillageStartGame struct {
 	WolfCount int
 }
