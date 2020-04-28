@@ -27,6 +27,20 @@ func newGroupCommand(
 	return newActionNoneCommand()
 }
 
+func newUserCommand(
+	action string,
+	target string,
+) command {
+	if v, ok := userActionMap[action]; ok {
+		return command{
+			Action: v,
+			Target: target,
+		}
+	}
+
+	return newActionNoneCommand()
+}
+
 func newActionNoneCommand() command {
 	return command{
 		Action: actionNone,
@@ -51,7 +65,12 @@ const (
 	actionReject                      action = "Reject"
 )
 
+const (
+	actionCheckUserState action = "CheckUserState"
+)
+
 var groupActionMap = map[string]action{
+	"確認":      actionCheckGroupState,
 	"村作成":     actionCreateVillage,
 	"デバッグ村作成": actionCreateVillageForDebug,
 	"村削除":     actionDeleteVillage,
@@ -62,4 +81,8 @@ var groupActionMap = map[string]action{
 	"設定終了":    actionFinishConfiguringRegulation,
 	"はい":      actionConfirm,
 	"いいえ":     actionReject,
+}
+
+var userActionMap = map[string]action{
+	"確認": actionCheckUserState,
 }

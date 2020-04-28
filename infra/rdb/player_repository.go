@@ -53,6 +53,23 @@ func (repo playerRepository) Create(
 	return nil
 }
 
+func (repo playerRepository) Update(player model.Player) error {
+	p := NewPlayer(player)
+
+	result := repo.db.Model(&Player{}).Where(map[string]interface{}{
+		"id":      p.ID.String,
+		"version": p.CurrentVersion().Int64,
+	}).Omit("id").Updates(&p)
+	if err := result.Error; err != nil {
+		return err
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("failed to update player: id: " + p.ID.String)
+	}
+
+	return nil
+}
+
 func (repo playerRepository) Delete(id model.PlayerID) error {
 	if err := repo.db.Delete(&Player{
 		ID: id.NullString(),

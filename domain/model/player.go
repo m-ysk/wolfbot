@@ -3,20 +3,23 @@ package model
 import (
 	"database/sql"
 	"time"
+	"wolfbot/domain/model/actionstatus"
 	"wolfbot/domain/model/lifestatus"
 	"wolfbot/domain/model/roles"
 	"wolfbot/lib/optlock"
 )
 
 type Player struct {
-	ID         PlayerID
-	VillageID  VillageID
-	Name       PlayerName
-	LifeStatus lifestatus.LifeStatus
-	Role       roles.Role
-	Version    optlock.Version
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID           PlayerID
+	VillageID    VillageID
+	Name         PlayerName
+	LifeStatus   lifestatus.LifeStatus
+	Role         roles.Role
+	ActionStatus actionstatus.ActionStatus
+	ActTo        PlayerID
+	Version      optlock.Version
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 func NewPlayer(
@@ -25,13 +28,21 @@ func NewPlayer(
 	name PlayerName,
 ) Player {
 	return Player{
-		ID:         id,
-		VillageID:  villageID,
-		Name:       name,
-		LifeStatus: lifestatus.Alive,
-		Role:       roles.Must(roles.Unassigned.String()),
-		Version:    0,
+		ID:           id,
+		VillageID:    villageID,
+		Name:         name,
+		LifeStatus:   lifestatus.Alive,
+		Role:         roles.Must(roles.Unassigned.String()),
+		ActionStatus: actionstatus.Unacted,
+		Version:      0,
 	}
+}
+
+func (p *Player) Acted() {
+	if p == nil {
+		return
+	}
+	p.ActionStatus = actionstatus.Acted
 }
 
 type Players []Player
@@ -69,6 +80,15 @@ func (ps Players) WolfCount() int {
 		}
 	}
 	return count
+}
+
+func (ps Players) FindByID(id PlayerID) (Player, bool) {
+	for _, v := range ps {
+		if v.ID == id {
+			return v, true
+		}
+	}
+	return Player{}, false
 }
 
 type PlayerID string

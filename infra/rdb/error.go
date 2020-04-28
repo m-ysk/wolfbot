@@ -1,6 +1,8 @@
 package rdb
 
-import "wolfbot/domain/model"
+import (
+	"wolfbot/domain/model"
+)
 
 type ErrorNotFound struct {
 	Err error

@@ -11,5 +11,9 @@ type UserPlayerRelationRepository interface {
 		userID model.UserID,
 		villageID model.VillageID,
 	) (model.UserPlayerRelation, error)
+	FindByUserIDAndPlayerName(
+		userID model.UserID,
+		playerName model.PlayerName,
+	) (model.UserPlayerRelation, error)
 	FindByUserID(userID model.UserID) (model.UserPlayerRelations, error)
 }

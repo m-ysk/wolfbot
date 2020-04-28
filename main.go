@@ -28,6 +28,7 @@ func main() {
 
 	messageHandler := handler.NewMessageHandler(
 		service.VillageService,
+		service.PlayerService,
 		service.UserPlayerRelationService,
 	)
 
@@ -51,11 +52,24 @@ func main() {
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					output, err := messageHandler.HandleGroupMessage(
-						message.Text,
-						model.UserID(event.Source.UserID),
-						event.Source.GroupID,
-					)
+					var output Replyer
+					var err error
+
+					switch event.Source.Type {
+					case linebot.EventSourceTypeGroup:
+						output, err = messageHandler.HandleGroupMessage(
+							message.Text,
+							model.UserID(event.Source.UserID),
+							event.Source.GroupID,
+						)
+
+					case linebot.EventSourceTypeUser:
+						output, err = messageHandler.HandleUserMessage(
+							message.Text,
+							model.UserID(event.Source.UserID),
+						)
+					}
+
 					if err != nil {
 						log.Println(err)
 

@@ -8,15 +8,18 @@ import (
 
 type MessageHandler struct {
 	villageService            service.VillageService
+	playerService             service.PlayerService
 	userPlayerRelationService service.UserPlayerRelationService
 }
 
 func NewMessageHandler(
 	villageService service.VillageService,
+	playerService service.PlayerService,
 	userPlayerRelationService service.UserPlayerRelationService,
 ) MessageHandler {
 	return MessageHandler{
 		villageService:            villageService,
+		playerService:             playerService,
 		userPlayerRelationService: userPlayerRelationService,
 	}
 }
@@ -82,6 +85,42 @@ func (h MessageHandler) HandleGroupMessage(
 	panic("unreachable")
 }
 
+func (h MessageHandler) HandleUserMessage(
+	message string,
+	userID model.UserID,
+) (Output, error) {
+	cmd, playerName := parseUserMessage(message)
+
+	switch cmd.Action {
+	case actionNone:
+		return NoReplyOutput{}, nil
+	}
+
+	var relation model.UserPlayerRelation
+	var err error
+	if playerName == "" {
+		relation, err = h.userPlayerRelationService.GetOneOrErrByUserID(userID)
+	} else {
+		relation, err = h.userPlayerRelationService.GetByUserIDAndPlayerName(
+			userID,
+			model.PlayerName(playerName),
+		)
+	}
+	if err != nil {
+		return NoReplyOutput{}, err
+	}
+
+	playerID := relation.PlayerID
+	villageID := relation.VillageID
+
+	switch cmd.Action {
+	case actionCheckUserState:
+		return h.playerService.CheckState(playerID, villageID)
+	}
+
+	panic("unreachable")
+}
+
 func parseGroupMessage(
 	message string,
 ) command {
@@ -104,6 +143,44 @@ func parseGroupMessage(
 		splitMsg[1],
 		splitMsg[0],
 	)
+}
+
+func parseUserMessage(
+	message string,
+) (command, string) {
+	replacedMsg := strings.ReplaceAll(message, "＠", "@")
+	replacedMsg = strings.ReplaceAll(replacedMsg, "／", "/")
+
+	splitSlash := strings.Split(replacedMsg, "/")
+
+	var msg, userName string
+	switch len(splitSlash) {
+	case 1:
+		msg = splitSlash[0]
+	case 2:
+		msg = splitSlash[0]
+		userName = splitSlash[1]
+	default:
+		return newActionNoneCommand(), ""
+	}
+
+	if msg == "@" {
+		return command{
+			Action: actionCheckUserState,
+			Target: "",
+		}, userName
+	}
+
+	splitMsg := strings.Split(msg, "@")
+
+	if len(splitMsg) != 2 {
+		return newActionNoneCommand(), ""
+	}
+
+	return newUserCommand(
+		splitMsg[1],
+		splitMsg[0],
+	), userName
 }
 
 type Output interface {

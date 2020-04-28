@@ -65,6 +65,34 @@ func (repo userPlayerRelationRepository) FindByUserIDAndVillageID(
 	return r.MustModel(), nil
 }
 
+func (repo userPlayerRelationRepository) FindByUserIDAndPlayerName(
+	userID model.UserID,
+	playerName model.PlayerName,
+) (model.UserPlayerRelation, error) {
+	var r UserPlayerRelation
+
+	result := repo.db.Where(&UserPlayerRelation{
+		UserID:     userID.NullString(),
+		PlayerName: playerName.NullString(),
+	}).First(&r)
+	if result.RecordNotFound() {
+		return model.UserPlayerRelation{}, NewErrorNotFound(
+			errors.New(
+				fmt.Sprintf(
+					"user_player_relation_not_found: user_id: %v, player_name: %v",
+					userID.String(),
+					playerName.String(),
+				),
+			),
+		)
+	}
+	if err := result.Error; err != nil {
+		return model.UserPlayerRelation{}, err
+	}
+
+	return r.MustModel(), nil
+}
+
 func (repo userPlayerRelationRepository) FindByUserID(
 	userID model.UserID,
 ) (model.UserPlayerRelations, error) {
