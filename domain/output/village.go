@@ -153,6 +153,35 @@ func (o VillageStartGame) Reply() string {
 	)
 }
 
+type VillageFinishVoting struct {
+	UnvotedCount int
+}
+
+func (o VillageFinishVoting) Reply() string {
+	var notice string
+	if o.UnvotedCount == 0 {
+		notice = "すべてのプレイヤーが投票を終了しています。"
+	} else {
+		notice = fmt.Sprintf(
+			"まだ投票を行っていないプレイヤーが%v人います。",
+			o.UnvotedCount,
+		)
+	}
+	return fmt.Sprintf(`%v
+
+本当に投票を終了して処刑を実行してもよろしいですか？
+
+投票を終了して処刑を実行する場合は、
+＠はい
+
+キャンセルする場合は、
+＠いいえ
+
+と発言してください`,
+		notice,
+	)
+}
+
 type VillageConfirm struct {
 	PrevStatus gamestatus.GameStatus
 }

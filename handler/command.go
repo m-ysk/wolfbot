@@ -62,6 +62,7 @@ const (
 	actionConfigureCasting            action = "ConfigureCasting"
 	actionFinishConfiguringRegulation action = "FinishConfiguringRegulation"
 	actionStartGame                   action = "GameStart"
+	actionFinishVoting                action = "FinishVoting"
 	actionConfirm                     action = "Confirm"
 	actionReject                      action = "Reject"
 )
@@ -82,6 +83,7 @@ var groupActionMap = map[string]action{
 	"配役設定":    actionConfigureCasting,
 	"設定終了":    actionFinishConfiguringRegulation,
 	"村開始":     actionStartGame,
+	"投票終了":    actionFinishVoting,
 	"はい":      actionConfirm,
 	"いいえ":     actionReject,
 }

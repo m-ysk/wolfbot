@@ -104,6 +104,16 @@ func (ps Players) CountUnacted() int {
 	return count
 }
 
+func (ps Players) CountUnvoted() int {
+	count := 0
+	for _, v := range ps {
+		if v.VoteStatus == votestatus.Unvoted {
+			count++
+		}
+	}
+	return count
+}
+
 func (ps Players) FindByID(id PlayerID) (Player, bool) {
 	for _, v := range ps {
 		if v.ID == id {

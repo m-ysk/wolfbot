@@ -67,6 +67,9 @@ func (h MessageHandler) HandleGroupMessage(
 	case actionStartGame:
 		return h.villageService.StartGame(villageID)
 
+	case actionFinishVoting:
+		return h.villageService.FinishVoting(villageID)
+
 	case actionConfirm:
 		return h.villageService.Confirm(villageID)
 

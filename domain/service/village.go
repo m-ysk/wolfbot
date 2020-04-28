@@ -301,6 +301,29 @@ func (s VillageService) StartGame(
 	}, nil
 }
 
+func (s VillageService) FinishVoting(
+	villageID model.VillageID,
+) (output.VillageFinishVoting, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.VillageFinishVoting{}, err
+	}
+
+	if game.Village.Status != gamestatus.Daytime {
+		return output.VillageFinishVoting{}, ErrorCommandUnauthorized
+	}
+
+	game.Village.UpdateStatus(gamestatus.ConfirmingFinishDaytime)
+
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageFinishVoting{}, err
+	}
+
+	return output.VillageFinishVoting{
+		UnvotedCount: game.Players.CountUnvoted(),
+	}, nil
+}
+
 func (s VillageService) Confirm(
 	villageID model.VillageID,
 ) (output.VillageConfirm, error) {
