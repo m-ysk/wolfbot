@@ -254,14 +254,12 @@ func (o VillageConfirmFinishVoting) Reply() string {
 	)
 }
 
-type VillageReject struct {
+type VillageRejectConfirmCasting struct {
 	PrevStatus gamestatus.GameStatus
 }
 
-func (o VillageReject) Reply() string {
-	switch st := o.PrevStatus; st {
-	case gamestatus.ConfirmingCasting:
-		return fmt.Sprintf(`配役の設定をキャンセルしました。
+func (o VillageRejectConfirmCasting) Reply() string {
+	return fmt.Sprintf(`配役の設定をキャンセルしました。
 
 もう一度配役を設定します。
 
@@ -275,10 +273,24 @@ func (o VillageReject) Reply() string {
 ○占い師1人、霊能者1人、狩人1人、人狼2人、残りを村人に設定する場合の例
 
 占霊狩狼狼＠配役設定`,
-			roles.AvailableRoleNames())
+		roles.AvailableRoleNames())
+}
 
-	default:
-		// Unreachable
-		return ""
-	}
+type VillageRejectFinishVoting struct{}
+
+func (o VillageRejectFinishVoting) Reply() string {
+	return `投票の終了をキャンセルしました。
+投票がまだのプレイヤーは、投票を行ってください。
+
+投票は、【わたしへの個別トーク】にて、
+
+（投票先プレイヤー名）＠投票
+
+と発言してください。
+
+投票の締切時間になったら、【このグループ】にて、
+
+＠投票終了
+
+と発言してください。`
 }

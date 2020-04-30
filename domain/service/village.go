@@ -385,23 +385,40 @@ func (s VillageService) confirmFinishVoting(
 
 func (s VillageService) Reject(
 	villageID model.VillageID,
-) (output.VillageReject, error) {
+) (output.Interface, error) {
 	game, err := s.gameRepository.FindByVillageID(villageID)
 	if err != nil {
-		return output.VillageReject{}, err
+		return output.VillageRejectConfirmCasting{}, err
 	}
 
 	switch st := game.Village.Status; st {
 	case gamestatus.ConfirmingCasting:
-		game.Village.UpdateStatus(gamestatus.ConfiguringCasting)
-		if err := s.gameRepository.Update(game); err != nil {
-			return output.VillageReject{}, err
-		}
-		return output.VillageReject{
-			PrevStatus: st,
-		}, nil
+		return s.rejectConfirmCasting(game)
+
+	case gamestatus.ConfirmingFinishDaytime:
+		return s.rejectFinishVoting(game)
 
 	default:
-		return output.VillageReject{}, ErrorCommandUnauthorized
+		return output.VillageRejectConfirmCasting{}, ErrorCommandUnauthorized
 	}
+}
+
+func (s VillageService) rejectConfirmCasting(
+	game model.Game,
+) (output.VillageRejectConfirmCasting, error) {
+	game.Village.UpdateStatus(gamestatus.ConfiguringCasting)
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageRejectConfirmCasting{}, err
+	}
+	return output.VillageRejectConfirmCasting{}, nil
+}
+
+func (s VillageService) rejectFinishVoting(
+	game model.Game,
+) (output.VillageRejectFinishVoting, error) {
+	game.Village.UpdateStatus(gamestatus.Daytime)
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageRejectFinishVoting{}, err
+	}
+	return output.VillageRejectFinishVoting{}, nil
 }
