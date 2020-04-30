@@ -4,12 +4,19 @@ import (
 	"fmt"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/roles"
+	"wolfbot/domain/model/votestatus"
 )
 
 type PlayerCheckState struct{}
 
 func (o PlayerCheckState) Reply() string {
 	return "現在はゲームの開始前です。グループトーク内でゲームの設定を行ってください"
+}
+
+type PlayerCheckStateDead struct{}
+
+func (o PlayerCheckStateDead) Reply() string {
+	return "残念ながらあなたは死んでしまいました。死亡したプレイヤーは一切行動できません。"
 }
 
 type PlayerCheckStateInCheckingRole struct {
@@ -20,6 +27,40 @@ func (o PlayerCheckStateInCheckingRole) Reply() string {
 	return fmt.Sprintf(`○あなたの役職
 %v`,
 		o.Role.Name,
+	)
+}
+
+type PlayerCheckStateInDaytime struct {
+	Role       roles.Role
+	VoteStatus votestatus.VoteStatus
+	VoteTo     model.PlayerName
+}
+
+func (o PlayerCheckStateInDaytime) Reply() string {
+	var vote string
+	if o.VoteStatus == votestatus.Unvoted {
+		vote = `まだ本日の投票を行っていません。
+
+このトーク内にて、
+（投票先プレイヤー名）＠投票
+と発言して投票してください`
+	} else {
+		vote = fmt.Sprintf(`あなたは「%v」さんに投票済みです。
+
+投票先を変更する場合は、もう一度、
+（投票先プレイヤー名）＠投票
+と発言して再投票してください`,
+			o.VoteTo.String(),
+		)
+	}
+
+	return fmt.Sprintf(`○あなたの役職
+%v
+
+○本日の投票先
+%v`,
+		o.Role.Name,
+		vote,
 	)
 }
 

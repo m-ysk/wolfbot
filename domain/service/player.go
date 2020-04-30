@@ -34,6 +34,20 @@ func (s PlayerService) CheckState(
 
 	player, _ := game.Players.FindByID(playerID)
 
+	if !player.Alive() {
+		return output.PlayerCheckStateDead{}, nil
+	}
+
+	if game.Village.Status == gamestatus.Daytime {
+		voteTo, _ := game.Players.FindByID(player.VoteTo)
+
+		return output.PlayerCheckStateInDaytime{
+			Role:       player.Role,
+			VoteStatus: player.VoteStatus,
+			VoteTo:     voteTo.Name,
+		}, nil
+	}
+
 	switch player.Role.ID {
 	case roles.Wolf:
 		return s.checkStateForWolf(game, player)
