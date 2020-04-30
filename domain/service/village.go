@@ -40,26 +40,26 @@ func NewVillageService(
 	}
 }
 
-func (s VillageService) CheckStatus(
+func (s VillageService) CheckState(
 	id model.VillageID,
-) (output.VillageCheckStatus, error) {
+) (output.VillageCheckState, error) {
 	village, err := s.villageRepository.FindByID(id)
 	if err != nil {
 		if model.IsErrorNotFound(err) {
-			return output.VillageCheckStatus{
+			return output.VillageCheckState{
 				VillageNotExist: true,
 			}, nil
 		}
 
-		return output.VillageCheckStatus{}, err
+		return output.VillageCheckState{}, err
 	}
 
 	players, err := s.playerRepository.FindByVillageID(id)
 	if err != nil {
-		return output.VillageCheckStatus{}, err
+		return output.VillageCheckState{}, err
 	}
 
-	return output.VillageCheckStatus{
+	return output.VillageCheckState{
 		VillageNotExist: false,
 		Village:         village,
 		Players:         players,

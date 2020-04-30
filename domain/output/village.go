@@ -8,13 +8,13 @@ import (
 	"wolfbot/domain/model/roles"
 )
 
-type VillageCheckStatus struct {
+type VillageCheckState struct {
 	VillageNotExist bool
 	Village         model.Village
 	Players         model.Players
 }
 
-func (o VillageCheckStatus) Reply() string {
+func (o VillageCheckState) Reply() string {
 	if o.VillageNotExist {
 		return `○現在の状況
 村が作成されていません
@@ -25,12 +25,28 @@ func (o VillageCheckStatus) Reply() string {
 と入力してください`
 	}
 
+	guide := "特になし"
+	if o.Village.Status == gamestatus.Daytime {
+		if unvoted := len(o.Players.FilterUnvoted()); unvoted == 0 {
+			guide = `すべてのプレイヤーが投票を終了しています。
+投票を終了して処刑を実行する場合は、
+＠投票終了
+と発言してください`
+		} else {
+			guide = fmt.Sprintf("投票を行っていないプレイヤーが%v人います。", unvoted)
+		}
+	}
+
 	return fmt.Sprintf(`○現在の状況
+%v
+
+○ガイド
 %v
 
 ○参加者
 %v`,
 		o.Village.Status.StringForHuman(),
+		guide,
 		o.Players.NamesForHuman(),
 	)
 }

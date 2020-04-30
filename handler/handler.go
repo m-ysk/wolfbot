@@ -38,7 +38,7 @@ func (h MessageHandler) HandleGroupMessage(
 		return NoReplyOutput{}, nil
 
 	case actionCheckGroupState:
-		return h.villageService.CheckStatus(villageID)
+		return h.villageService.CheckState(villageID)
 
 	case actionCreateVillage:
 		return h.villageService.Create(villageID)

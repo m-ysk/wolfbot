@@ -56,6 +56,13 @@ func (p *Player) Acted() bool {
 	return p.ActionStatus == actionstatus.Acted
 }
 
+func (p *Player) Voted() bool {
+	if p == nil {
+		return false
+	}
+	return p.VoteStatus == votestatus.Voted
+}
+
 func (p *Player) Act(to PlayerID) {
 	if p == nil {
 		return
@@ -109,6 +116,16 @@ func (ps Players) FilterUnacted() Players {
 	var result Players
 	for _, v := range ps {
 		if !v.Acted() {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func (ps Players) FilterUnvoted() Players {
+	var result Players
+	for _, v := range ps {
+		if !v.Voted() {
 			result = append(result, v)
 		}
 	}
