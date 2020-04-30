@@ -474,6 +474,9 @@ func (s VillageService) Reject(
 	case gamestatus.ConfirmingFinishDaytime:
 		return s.rejectFinishVoting(game)
 
+	case gamestatus.ConfirmingFinishNighttime:
+		return s.rejectFinishNighttime(game)
+
 	default:
 		return output.VillageRejectConfirmCasting{}, ErrorCommandUnauthorized
 	}
@@ -497,4 +500,14 @@ func (s VillageService) rejectFinishVoting(
 		return output.VillageRejectFinishVoting{}, err
 	}
 	return output.VillageRejectFinishVoting{}, nil
+}
+
+func (s VillageService) rejectFinishNighttime(
+	game model.Game,
+) (output.VillageRejectFinishNighttime, error) {
+	game.Village.UpdateStatus(gamestatus.Nighttime)
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageRejectFinishNighttime{}, err
+	}
+	return output.VillageRejectFinishNighttime{}, nil
 }

@@ -372,6 +372,16 @@ func (o VillageRejectFinishVoting) Reply() string {
 と発言してください。`
 }
 
+type VillageRejectFinishNighttime struct{}
+
+func (o VillageRejectFinishNighttime) Reply() string {
+	return `夜時間の終了をキャンセルしました。
+
+夜時間を終了し、次の日に進む場合は、【このグループ】にて、
+＠夜明け
+と入力してください`
+}
+
 func judgeResultMessage(result judge.Judge) string {
 	switch result {
 	case judge.Villagers:
