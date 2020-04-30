@@ -2,6 +2,7 @@ package rdb
 
 import (
 	"errors"
+	"log"
 	"wolfbot/domain/model"
 
 	"github.com/jinzhu/gorm"
@@ -35,7 +36,8 @@ func (repo gameRepository) Update(game model.Game) error {
 	}
 	if result.RowsAffected == 0 {
 		Rollback(tx)
-		return errors.New("failed to update village: id: " + village.ID.String)
+		log.Println("failed to update village: id: " + village.ID.String)
+		return ErrorConcurrentDBAccess
 	}
 
 	for _, p := range players {
@@ -49,7 +51,8 @@ func (repo gameRepository) Update(game model.Game) error {
 		}
 		if result.RowsAffected == 0 {
 			Rollback(tx)
-			return errors.New("failed to update player: id: " + p.ID.String)
+			log.Println("failed to update player: id: " + p.ID.String)
+			return ErrorConcurrentDBAccess
 		}
 	}
 

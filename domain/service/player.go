@@ -102,7 +102,11 @@ func (s PlayerService) Vote(
 	}
 
 	player, _ := game.Players.FindByID(playerID)
-	targetPlayer, _ := game.Players.FindByName(model.PlayerName(target))
+
+	targetPlayer, ok := game.Players.FindByName(model.PlayerName(target))
+	if !ok {
+		return output.PlayerVote{}, ErrorInvalidTargetPlayerName
+	}
 
 	player.Vote(targetPlayer.ID)
 
@@ -112,5 +116,68 @@ func (s PlayerService) Vote(
 
 	return output.PlayerVote{
 		Target: targetPlayer.Name,
+	}, nil
+}
+
+func (s PlayerService) Bite(
+	playerID model.PlayerID,
+	villageID model.VillageID,
+	target string,
+) (output.PlayerBite, error) {
+	result, err := s.validateRoleCommandWithTarget(playerID, villageID, model.PlayerName(target))
+	if err != nil {
+		return output.PlayerBite{}, err
+	}
+
+	if !result.Actor.Role.IsBitable() {
+		return output.PlayerBite{}, ErrorRoleCommanndUnauthorized
+	}
+
+	bitables := result.Game.Players.FilterBitable()
+	bitables.Bite(result.Target.ID)
+
+	if err := s.playerRepository.UpdateAll(bitables); err != nil {
+		return output.PlayerBite{}, err
+	}
+
+	return output.PlayerBite{
+		Target: result.Target.Name,
+	}, nil
+}
+
+type validateRoleCommandWithTargetResult struct {
+	Game   model.Game
+	Actor  model.Player
+	Target model.Player
+}
+
+func (s PlayerService) validateRoleCommandWithTarget(
+	playerID model.PlayerID,
+	villageID model.VillageID,
+	target model.PlayerName,
+) (validateRoleCommandWithTargetResult, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return validateRoleCommandWithTargetResult{}, err
+	}
+
+	if game.Village.Status != gamestatus.Nighttime {
+		return validateRoleCommandWithTargetResult{}, ErrorCommandUnauthorized
+	}
+
+	player, _ := game.Players.FindByID(playerID)
+	if !player.IsAlive() {
+		return validateRoleCommandWithTargetResult{}, ErrorDeadPlayerCommandUnauthorized
+	}
+
+	targetPlayer, ok := game.Players.FindByName(target)
+	if !ok {
+		return validateRoleCommandWithTargetResult{}, ErrorInvalidTargetPlayerName
+	}
+
+	return validateRoleCommandWithTargetResult{
+		Game:   game,
+		Actor:  player,
+		Target: targetPlayer,
 	}, nil
 }

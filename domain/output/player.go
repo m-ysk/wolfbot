@@ -64,3 +64,17 @@ func (o PlayerVote) Reply() string {
 		o.Target.String(),
 	)
 }
+
+type PlayerBite struct {
+	Target model.PlayerName
+}
+
+func (o PlayerBite) Reply() string {
+	return fmt.Sprintf(`「%v」さんを今晩の襲撃先に設定しました。
+
+襲撃先を変更する場合は、もう一度、
+（襲撃先プレイヤー名）＠噛む
+と入力してください`,
+		o.Target,
+	)
+}

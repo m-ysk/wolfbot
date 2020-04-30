@@ -64,7 +64,35 @@ func (repo playerRepository) Update(player model.Player) error {
 		return err
 	}
 	if result.RowsAffected == 0 {
-		return errors.New("failed to update player: id: " + p.ID.String)
+		log.Println("failed to update player: id: " + p.ID.String)
+		return ErrorConcurrentDBAccess
+	}
+
+	return nil
+}
+
+func (repo playerRepository) UpdateAll(players model.Players) error {
+	ps := NewPlayers(players)
+
+	tx := repo.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			Rollback(tx)
+		}
+	}()
+
+	for _, p := range ps {
+		result := repo.db.Model(&Player{}).Where(map[string]interface{}{
+			"id":      p.ID.String,
+			"version": p.CurrentVersion().Int64,
+		}).Omit("id").Updates(&p)
+		if err := result.Error; err != nil {
+			return err
+		}
+		if result.RowsAffected == 0 {
+			log.Println("failed to update player: id: " + p.ID.String)
+			return ErrorConcurrentDBAccess
+		}
 	}
 
 	return nil

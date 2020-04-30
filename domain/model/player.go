@@ -42,6 +42,13 @@ func NewPlayer(
 	}
 }
 
+func (p *Player) IsAlive() bool {
+	if p == nil {
+		return false
+	}
+	return p.LifeStatus == lifestatus.Alive
+}
+
 func (p *Player) Acted() {
 	if p == nil {
 		return
@@ -73,6 +80,25 @@ func (p *Player) Kill() {
 }
 
 type Players []Player
+
+func (ps Players) Bite(target PlayerID) {
+	for i, v := range ps {
+		if v.Role.IsBitable() {
+			ps[i].ActTo = target
+			ps[i].Acted()
+		}
+	}
+}
+
+func (ps Players) FilterBitable() Players {
+	var result Players
+	for _, v := range ps {
+		if v.Role.IsBitable() {
+			result = append(result, v)
+		}
+	}
+	return result
+}
 
 func (ps Players) NamesForHuman() string {
 	var result string

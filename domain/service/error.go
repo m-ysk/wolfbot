@@ -11,6 +11,16 @@ var (
 		"現在はこのコマンドを実行できません",
 	)
 
+	ErrorRoleCommanndUnauthorized = errorwr.New(
+		errors.New("role_command_unauthorized"),
+		"あなたはこのコマンドを実行できません",
+	)
+
+	ErrorDeadPlayerCommandUnauthorized = errorwr.New(
+		errors.New("player_dead"),
+		"あなたは死亡しています。死亡したプレイヤーは一切行動できません",
+	)
+
 	ErrorDuplicatedPlayerInGroup = errorwr.New(
 		errors.New("duplicated_player_in_group"),
 		"あなたは既にこの村に参加しています",
@@ -24,5 +34,10 @@ var (
 	ErrorInvalidCallToDebugFunction = errorwr.New(
 		errors.New("invalid_call_to_debug_function"),
 		"現在はデバッグモードではありません",
+	)
+
+	ErrorInvalidTargetPlayerName = errorwr.New(
+		errors.New("invalid_target_player_name"),
+		"対象プレイヤー名が誤っています。対象プレイヤー名を確認の上、もう一度入力してください",
 	)
 )

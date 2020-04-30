@@ -43,6 +43,15 @@ func NewFromAbbr(abbr Abbr) (Role, error) {
 	return Role{}, ErrorInvalidRoleAbbr
 }
 
+func (r Role) IsBitable() bool {
+	for _, v := range bitableRoles {
+		if v == r.ID {
+			return true
+		}
+	}
+	return false
+}
+
 func (r Role) String() string {
 	return string(r.ID)
 }

@@ -1,5 +1,10 @@
 package roles
 
+// 「噛む」コマンドを実行できる役職
+var bitableRoles = IDs{
+	Wolf,
+}
+
 var roleUnassigned = Role{
 	ID:            Unassigned,
 	Name:          "未割当",
