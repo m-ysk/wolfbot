@@ -3,6 +3,7 @@ package output
 import (
 	"fmt"
 	"wolfbot/domain/model"
+	"wolfbot/domain/model/actionstatus"
 	"wolfbot/domain/model/roles"
 	"wolfbot/domain/model/votestatus"
 )
@@ -64,12 +65,12 @@ func (o PlayerCheckStateInDaytime) Reply() string {
 	)
 }
 
-type PlayerCheckStateForWolf struct {
+type PlayerCheckStateInCheckinRoleForWolf struct {
 	Role           roles.Role
 	OtherWolfNames []string
 }
 
-func (o PlayerCheckStateForWolf) Reply() string {
+func (o PlayerCheckStateInCheckinRoleForWolf) Reply() string {
 	var otherWolves string
 	if len(o.OtherWolfNames) == 0 {
 		otherWolves = "人狼はあなた1人です"
@@ -89,6 +90,42 @@ func (o PlayerCheckStateForWolf) Reply() string {
 %v`,
 		o.Role.Name,
 		otherWolves,
+	)
+}
+
+type PlayerCheckStateInNighttimeForWolf struct {
+	Role         roles.Role
+	ActionStatus actionstatus.ActionStatus
+	ActTo        model.PlayerName
+}
+
+func (o PlayerCheckStateInNighttimeForWolf) Reply() string {
+	var bite string
+	if o.ActionStatus == actionstatus.Unacted {
+		bite = `まだ本日の襲撃先を指定していません。
+
+このトークにて、
+（襲撃先プレイヤー名）＠噛む
+と発言して襲撃先を指定してください。
+
+※人狼が複数名いる場合、代表者1人のみ襲撃先の設定を行ってください`
+	} else {
+		bite = fmt.Sprintf(`%v
+
+※襲撃機を変更する場合、このトークにて
+（襲撃先プレイヤー名）＠噛む
+と発言して襲撃先を指定してください。`,
+			o.ActTo,
+		)
+	}
+
+	return fmt.Sprintf(`○あなたの役職
+%v
+
+○本日の襲撃先
+%v`,
+		o.Role.Name,
+		bite,
 	)
 }
 

@@ -91,9 +91,18 @@ func (s PlayerService) checkStateForWolf(
 		player.Act("")
 		s.playerRepository.Update(player)
 
-		return output.PlayerCheckStateForWolf{
+		return output.PlayerCheckStateInCheckinRoleForWolf{
 			Role:           player.Role,
 			OtherWolfNames: otherWolfNames,
+		}, nil
+
+	case gamestatus.Nighttime:
+		target, _ := game.Players.FindByID(player.ActTo)
+
+		return output.PlayerCheckStateInNighttimeForWolf{
+			Role:         player.Role,
+			ActionStatus: player.ActionStatus,
+			ActTo:        target.Name,
 		}, nil
 
 	default:
