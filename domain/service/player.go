@@ -102,10 +102,16 @@ func (s PlayerService) Vote(
 	}
 
 	player, _ := game.Players.FindByID(playerID)
+	if !player.Alive() {
+		return output.PlayerVote{}, ErrorDeadPlayerCommandUnauthorized
+	}
 
 	targetPlayer, ok := game.Players.FindByName(model.PlayerName(target))
 	if !ok {
 		return output.PlayerVote{}, ErrorInvalidTargetPlayerName
+	}
+	if !targetPlayer.Alive() {
+		return output.PlayerVote{}, ErrorDeadTargetPlayerName
 	}
 
 	player.Vote(targetPlayer.ID)
@@ -173,6 +179,9 @@ func (s PlayerService) validateRoleCommandWithTarget(
 	targetPlayer, ok := game.Players.FindByName(target)
 	if !ok {
 		return validateRoleCommandWithTargetResult{}, ErrorInvalidTargetPlayerName
+	}
+	if !targetPlayer.Alive() {
+		return validateRoleCommandWithTargetResult{}, ErrorDeadTargetPlayerName
 	}
 
 	return validateRoleCommandWithTargetResult{

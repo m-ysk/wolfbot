@@ -40,4 +40,9 @@ var (
 		errors.New("invalid_target_player_name"),
 		"対象プレイヤー名が誤っています。対象プレイヤー名を確認の上、もう一度入力してください",
 	)
+
+	ErrorDeadTargetPlayerName = errorwr.New(
+		errors.New("dead_target_player_name"),
+		"指定されたプレイヤーは既に死亡しています。生存しているプレイヤーの名前を指定してください",
+	)
 )
