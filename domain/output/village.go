@@ -293,6 +293,44 @@ func (o VillageConfirmFinishVotingJudged) Reply() string {
 	)
 }
 
+type VillageConfirmFinishNighttimeJudged struct {
+	Judge   judge.Judge
+	Victims model.PlayerNames
+}
+
+func (o VillageConfirmFinishNighttimeJudged) Reply() string {
+	return fmt.Sprintf(`%v
+
+%v`,
+		victimsMessage(o.Victims),
+		judgeResultMessage(o.Judge),
+	)
+}
+
+type VillageConfirmFinishNighttimeOngoing struct {
+	Victims model.PlayerNames
+}
+
+func (o VillageConfirmFinishNighttimeOngoing) Reply() string {
+	return fmt.Sprintf(`%v
+
+今日も議論を行い、村で決めた期限までに、処刑すべき人物の名前を投票してください。
+
+投票は、【わたしへの個別トーク】にて、
+
+（投票先プレイヤー名）＠投票
+
+と入力してください。
+
+投票の締切時間になったら、【このグループ】にて、
+
+＠投票終了
+
+と入力してください。`,
+		victimsMessage(o.Victims),
+	)
+}
+
 type VillageRejectConfirmCasting struct {
 	PrevStatus gamestatus.GameStatus
 }
@@ -360,4 +398,20 @@ func judgeResultMessage(result judge.Judge) string {
 
 	// Unreachable
 	return ""
+}
+
+func victimsMessage(victims model.PlayerNames) string {
+	if len(victims) == 0 {
+		return "夜が明けました……幸いなことに、昨夜は犠牲者がいなかったようです。"
+	}
+
+	var names string
+	for _, v := range victims {
+		if names != "" {
+			names += "、"
+		}
+		names += "「" + v.String() + "」さん"
+	}
+
+	return fmt.Sprintf("夜が明けました……%vが無残な姿で発見されました", names)
 }

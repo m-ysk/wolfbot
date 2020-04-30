@@ -80,6 +80,14 @@ func (p *Player) Vote(target PlayerID) {
 	p.VoteTo = target
 }
 
+func (p *Player) Unvote() {
+	if p == nil {
+		return
+	}
+	p.VoteStatus = votestatus.Unvoted
+	p.VoteTo = ""
+}
+
 func (p *Player) Kill() {
 	if p == nil {
 		return
@@ -113,6 +121,14 @@ func (ps Players) FilterBitable() Players {
 		if v.Role.Bitable() {
 			result = append(result, v)
 		}
+	}
+	return result
+}
+
+func (ps Players) Names() PlayerNames {
+	var result PlayerNames
+	for _, v := range ps {
+		result = append(result, v.Name)
 	}
 	return result
 }
@@ -220,6 +236,8 @@ func (id PlayerID) NullString() sql.NullString {
 }
 
 type PlayerName string
+
+type PlayerNames []PlayerName
 
 func NewPlayerName(name string) (PlayerName, error) {
 	return PlayerName(name), nil

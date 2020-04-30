@@ -369,6 +369,9 @@ func (s VillageService) Confirm(
 	case gamestatus.ConfirmingFinishDaytime:
 		return s.confirmFinishVoting(game)
 
+	case gamestatus.ConfirmingFinishNighttime:
+		return s.confirmFinishNighttime(game)
+
 	default:
 		return nil, ErrorCommandUnauthorized
 	}
@@ -390,7 +393,7 @@ func (s VillageService) confirmFinishVoting(
 	randomInt := func(n int) int {
 		return rand.Intn(n)
 	}
-	result, err := game.Execute(randomInt)
+	result, err := game.Lynch(randomInt)
 	if err != nil {
 		return output.VillageConfirmFinishVotingExecuted{}, err
 	}
@@ -413,7 +416,7 @@ func (s VillageService) confirmFinishVoting(
 
 		return output.VillageConfirmFinishVotingJudged{
 			Judge:          judgeRes,
-			ExecutedPlayer: result.ExecutedPlayer.Name,
+			ExecutedPlayer: result.LynchedPlayer.Name,
 			VoteDetail:     game.VoteDetail(),
 		}, nil
 	}
@@ -425,8 +428,34 @@ func (s VillageService) confirmFinishVoting(
 	}
 
 	return output.VillageConfirmFinishVotingExecuted{
-		ExecutedPlayer: result.ExecutedPlayer.Name,
+		ExecutedPlayer: result.LynchedPlayer.Name,
 		VoteDetail:     game.VoteDetail(),
+	}, nil
+}
+
+func (s VillageService) confirmFinishNighttime(
+	game model.Game,
+) (output.Interface, error) {
+	result := game.ExecuteRoleAction()
+
+	if judgeRes := game.Judge(); judgeRes != judge.Ongoing {
+		if err := s.villageRepository.Delete(game.Village.ID); err != nil {
+			return nil, err
+		}
+		return output.VillageConfirmFinishNighttimeJudged{
+			Judge:   judgeRes,
+			Victims: result.Victims.Names(),
+		}, nil
+	}
+
+	game.ProceedToNextDay()
+
+	if err := s.gameRepository.Update(game); err != nil {
+		return nil, err
+	}
+
+	return output.VillageConfirmFinishNighttimeOngoing{
+		Victims: result.Victims.Names(),
 	}, nil
 }
 

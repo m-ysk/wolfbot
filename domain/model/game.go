@@ -53,6 +53,20 @@ func (g *Game) ProceedToNighttime() {
 	g.Village.Status = gamestatus.Nighttime
 }
 
+func (g *Game) ProceedToNextDay() {
+	if g == nil {
+		return
+	}
+
+	for i, v := range g.Players {
+		v.Unvote()
+		g.Players[i] = v
+	}
+
+	g.Village.Status = gamestatus.Daytime
+	g.Village.Day++
+}
+
 func (g *Game) Judge() judge.Judge {
 	if g == nil {
 		return judge.Ongoing
@@ -72,59 +86,61 @@ func (g *Game) Judge() judge.Judge {
 	return judge.Ongoing
 }
 
-type ExecutionResult struct {
-	Revoting       bool
-	ExecutedPlayer Player
+type LynchResult struct {
+	Revoting      bool
+	LynchedPlayer Player
 }
 
+// 投票結果に基づき処刑を実行する
 // randomIntは、0以上、引数として与えた整数未満の整数をランダムに生成する関数
-func (g *Game) Execute(randomInt func(int) int) (ExecutionResult, error) {
+func (g *Game) Lynch(randomInt func(int) int) (LynchResult, error) {
 	if g == nil {
-		return ExecutionResult{}, errors.New("nil_receiver")
+		return LynchResult{}, errors.New("nil_receiver")
 	}
 
 	voteResult := g.voteCounting()
 
-	mostVoted := voteResult.mostVoted()
+	mostVotedIDs := voteResult.mostVoted()
 
-	if len(mostVoted) == 0 {
-		return ExecutionResult{}, errors.New("execution_error")
+	if len(mostVotedIDs) == 0 {
+		return LynchResult{}, errors.New("execution_error")
 	}
 
-	if mv := len(mostVoted); mv > 1 {
+	if mv := len(mostVotedIDs); mv > 1 {
 		// 投票同数の場合の設定が再投票の場合
 		if g.Village.Regulation.TieVote == regulation.TieVoteRevoting {
-			return ExecutionResult{
-				Revoting:       true,
-				ExecutedPlayer: Player{},
+			return LynchResult{
+				Revoting:      true,
+				LynchedPlayer: Player{},
 			}, nil
 		}
 
 		// 投票同数の場合の設定が最多得票者をランダム処刑の場合
-		executedPlayerID := mostVoted[randomInt(mv)]
-		executedPlayer, _ := g.Players.FindByID(executedPlayerID)
-		executedPlayer.Kill()
-		g.Players.UpdatePlayer(executedPlayer)
+		lynchedPlayerID := mostVotedIDs[randomInt(mv)]
+		lynchedPlayer, _ := g.Players.FindByID(lynchedPlayerID)
+		lynchedPlayer.Kill()
+		g.Players.UpdatePlayer(lynchedPlayer)
 
-		return ExecutionResult{
-			Revoting:       false,
-			ExecutedPlayer: executedPlayer,
+		return LynchResult{
+			Revoting:      false,
+			LynchedPlayer: lynchedPlayer,
 		}, nil
 	}
 
-	executedPlayerID := mostVoted[0]
-	executedPlayer, _ := g.Players.FindByID(executedPlayerID)
-	executedPlayer.Kill()
-	g.Players.UpdatePlayer(executedPlayer)
+	lynchedPlayerID := mostVotedIDs[0]
+	lynchedPlayer, _ := g.Players.FindByID(lynchedPlayerID)
+	lynchedPlayer.Kill()
+	g.Players.UpdatePlayer(lynchedPlayer)
 
-	return ExecutionResult{
-		Revoting:       false,
-		ExecutedPlayer: executedPlayer,
+	return LynchResult{
+		Revoting:      false,
+		LynchedPlayer: lynchedPlayer,
 	}, nil
 }
 
 type VoteCountingResult map[PlayerID]int
 
+// 各Playerに対する投票数をカウントしてmapで返す
 func (g *Game) voteCounting() VoteCountingResult {
 	if g == nil {
 		return nil
@@ -190,4 +206,32 @@ func (d VoteDetail) StringForHuman() string {
 		result += k.String() + "=>" + v.String()
 	}
 	return result
+}
+
+type ExecuteRoleActionResult struct {
+	Victims Players
+}
+
+func (g *Game) ExecuteRoleAction() ExecuteRoleActionResult {
+	if g == nil {
+		return ExecuteRoleActionResult{}
+	}
+
+	wolves := g.Players.FilterBitable()
+	if len(wolves) == 0 {
+		return ExecuteRoleActionResult{}
+	}
+
+	bittenID := wolves[0].ActTo
+
+	bitten, _ := g.Players.FindByID(bittenID)
+	bitten.Kill()
+	g.Players.UpdatePlayer(bitten)
+
+	var victims Players
+	victims = append(victims, bitten)
+
+	return ExecuteRoleActionResult{
+		Victims: victims,
+	}
 }
