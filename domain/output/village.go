@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/gamestatus"
+	"wolfbot/domain/model/judge"
 	"wolfbot/domain/model/roles"
 )
 
@@ -208,31 +209,12 @@ func (o VillageConfirmCasting) Reply() string {
 と入力してください。`
 }
 
-type VillageConfirmFinishVoting struct {
-	Revoting       bool
+type VillageConfirmFinishVotingExecuted struct {
 	ExecutedPlayer model.PlayerName
 	VoteDetail     model.VoteDetail
 }
 
-func (o VillageConfirmFinishVoting) Reply() string {
-	if o.Revoting {
-		return fmt.Sprintf(`投票結果が同数のため、再投票を行います。
-
-各プレイヤーは、もう一度、【わたしへの個別トーク】にて
-（投票先プレイヤー名）＠投票
-と入力して再投票を行ってください。
-（再投票を行わなかったプレイヤーは、前回と同じ投票先に投票したものとみなされます）
-
-全員の再投票が終わったら、【このグループ】にて、
-＠投票終了
-と発言してください。
-
-○投票結果
-%v`,
-			o.VoteDetail.StringForHuman(),
-		)
-	}
-
+func (o VillageConfirmFinishVotingExecuted) Reply() string {
 	return fmt.Sprintf(`投票の結果、%vさんが処刑されました。
 
 ○投票結果
@@ -251,6 +233,47 @@ func (o VillageConfirmFinishVoting) Reply() string {
 と入力してください`,
 		o.ExecutedPlayer.String(),
 		o.VoteDetail.StringForHuman(),
+	)
+}
+
+type VillageConfirmFinishVotingRevoting struct {
+	VoteDetail model.VoteDetail
+}
+
+func (o VillageConfirmFinishVotingRevoting) Reply() string {
+	return fmt.Sprintf(`投票結果が同数のため、再投票を行います。
+
+各プレイヤーは、もう一度、【わたしへの個別トーク】にて
+（投票先プレイヤー名）＠投票
+と入力して再投票を行ってください。
+（再投票を行わなかったプレイヤーは、前回と同じ投票先に投票したものとみなされます）
+
+全員の再投票が終わったら、【このグループ】にて、
+＠投票終了
+と発言してください。
+
+○投票結果
+%v`,
+		o.VoteDetail.StringForHuman(),
+	)
+}
+
+type VillageConfirmFinishVotingJudged struct {
+	Judge          judge.Judge
+	ExecutedPlayer model.PlayerName
+	VoteDetail     model.VoteDetail
+}
+
+func (o VillageConfirmFinishVotingJudged) Reply() string {
+	return fmt.Sprintf(`投票の結果、%vさんが処刑されました。
+
+○投票結果
+%v
+
+%v`,
+		o.ExecutedPlayer.String(),
+		o.VoteDetail.StringForHuman(),
+		judgeResultMessage(o.Judge),
 	)
 }
 
@@ -293,4 +316,32 @@ func (o VillageRejectFinishVoting) Reply() string {
 ＠投票終了
 
 と発言してください。`
+}
+
+func judgeResultMessage(result judge.Judge) string {
+	switch result {
+	case judge.Villagers:
+		return `……村に平和が訪れました！
+【村人側の勝利】です。
+もう一度ゲームを行う場合は、
+＠村作成
+と入力してください。`
+
+	case judge.Wolves:
+		return `……村は人狼に乗っ取られてしまいました。
+【人狼側の勝利】です。
+もう一度ゲームを行う場合は、
+＠村作成
+と入力してください。`
+
+	case judge.Foxes:
+		return `……なんと、村は妖狐に乗っ取られてしまいました！
+【妖狐の勝利】です。
+もう一度ゲームを行う場合は、
+＠村作成
+と入力してください。`
+	}
+
+	// Unreachable
+	return ""
 }

@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"wolfbot/domain/model/gamestatus"
+	"wolfbot/domain/model/judge"
 	"wolfbot/domain/model/regulation"
 	"wolfbot/domain/model/roles"
 	"wolfbot/domain/model/votestatus"
@@ -22,7 +23,7 @@ func (g *Game) AssignRole() {
 	roleIDs := g.Village.Casting.RoleIDs()
 
 	shuffledInts := randutil.GenerateShuffledPermutation(
-		g.Players.Count(),
+		len(g.Players),
 	)
 
 	for i, v := range shuffledInts {
@@ -52,6 +53,25 @@ func (g *Game) ProceedToNighttime() {
 	g.Village.Status = gamestatus.Nighttime
 }
 
+func (g *Game) Judge() judge.Judge {
+	if g == nil {
+		return judge.Ongoing
+	}
+
+	aliveCountablePlayers := g.Players.CountAliveForJudge()
+	wolves := g.Players.CountWolf()
+
+	if wolves == 0 {
+		return judge.Villagers
+	}
+
+	if wolves*2 >= aliveCountablePlayers {
+		return judge.Wolves
+	}
+
+	return judge.Ongoing
+}
+
 type ExecutionResult struct {
 	Revoting       bool
 	ExecutedPlayer Player
@@ -59,6 +79,10 @@ type ExecutionResult struct {
 
 // randomIntは、0以上、引数として与えた整数未満の整数をランダムに生成する関数
 func (g *Game) Execute(randomInt func(int) int) (ExecutionResult, error) {
+	if g == nil {
+		return ExecutionResult{}, errors.New("nil_receiver")
+	}
+
 	voteResult := g.voteCounting()
 
 	mostVoted := voteResult.mostVoted()

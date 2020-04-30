@@ -83,7 +83,7 @@ type Players []Player
 
 func (ps Players) Bite(target PlayerID) {
 	for i, v := range ps {
-		if v.Role.IsBitable() {
+		if v.Role.Bitable() {
 			ps[i].ActTo = target
 			ps[i].Acted()
 		}
@@ -93,7 +93,7 @@ func (ps Players) Bite(target PlayerID) {
 func (ps Players) FilterBitable() Players {
 	var result Players
 	for _, v := range ps {
-		if v.Role.IsBitable() {
+		if v.Role.Bitable() {
 			result = append(result, v)
 		}
 	}
@@ -111,8 +111,14 @@ func (ps Players) NamesForHuman() string {
 	return result
 }
 
-func (ps Players) Count() int {
-	return len(ps)
+func (ps Players) CountAliveForJudge() int {
+	count := 0
+	for _, v := range ps {
+		if v.LifeStatus == lifestatus.Alive && !v.Role.UncountableForJudge() {
+			count++
+		}
+	}
+	return count
 }
 
 func (ps Players) CountRole(r roles.ID) int {
@@ -128,7 +134,7 @@ func (ps Players) CountRole(r roles.ID) int {
 func (ps Players) CountWolf() int {
 	count := 0
 	for _, v := range ps {
-		if v.Role.WolfCountType.WolfCountable() {
+		if v.Role.WolfCountable() {
 			count++
 		}
 	}

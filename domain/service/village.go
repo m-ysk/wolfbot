@@ -10,6 +10,7 @@ import (
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/debug"
 	"wolfbot/domain/model/gamestatus"
+	"wolfbot/domain/model/judge"
 	"wolfbot/domain/model/roles"
 	"wolfbot/domain/output"
 	"wolfbot/lib/errorwr"
@@ -198,7 +199,7 @@ func (s VillageService) FinishRecruiting(
 		return output.VillageFinishRecruiting{}, ErrorCommandUnauthorized
 	}
 
-	if game.Players.Count() < 3 {
+	if len(game.Players) < 3 {
 		return output.VillageFinishRecruiting{}, errorwr.New(
 			errors.New("insufficient_player_count"),
 			"ゲームの開始には3人以上のプレイヤーの参加が必要です",
@@ -229,7 +230,7 @@ func (s VillageService) ConfigureCasting(
 
 	casting, err := roles.ParseAndValidateCasting(
 		castingStr,
-		game.Players.Count(),
+		len(game.Players),
 	)
 	if err != nil {
 		return output.VillageConfigureCasting{}, err
@@ -357,27 +358,45 @@ func (s VillageService) confirmCasting(
 
 func (s VillageService) confirmFinishVoting(
 	game model.Game,
-) (output.VillageConfirmFinishVoting, error) {
+) (output.Interface, error) {
 	randomInt := func(n int) int {
 		return rand.Intn(n)
 	}
 	result, err := game.Execute(randomInt)
 	if err != nil {
-		return output.VillageConfirmFinishVoting{}, err
+		return output.VillageConfirmFinishVotingExecuted{}, err
 	}
 
 	if result.Revoting {
 		game.Village.UpdateStatus(gamestatus.Daytime)
-	} else {
-		game.ProceedToNighttime()
+		if err := s.gameRepository.Update(game); err != nil {
+			return output.VillageConfirmFinishVotingExecuted{}, err
+		}
+
+		return output.VillageConfirmFinishVotingRevoting{
+			VoteDetail: game.VoteDetail(),
+		}, nil
 	}
+
+	if judgeRes := game.Judge(); judgeRes != judge.Ongoing {
+		if err := s.villageRepository.Delete(game.Village.ID); err != nil {
+			return output.VillageConfirmFinishVotingJudged{}, err
+		}
+
+		return output.VillageConfirmFinishVotingJudged{
+			Judge:          judgeRes,
+			ExecutedPlayer: result.ExecutedPlayer.Name,
+			VoteDetail:     game.VoteDetail(),
+		}, nil
+	}
+
+	game.ProceedToNighttime()
 
 	if err := s.gameRepository.Update(game); err != nil {
-		return output.VillageConfirmFinishVoting{}, err
+		return output.VillageConfirmFinishVotingExecuted{}, err
 	}
 
-	return output.VillageConfirmFinishVoting{
-		Revoting:       result.Revoting,
+	return output.VillageConfirmFinishVotingExecuted{
 		ExecutedPlayer: result.ExecutedPlayer.Name,
 		VoteDetail:     game.VoteDetail(),
 	}, nil

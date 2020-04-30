@@ -3,10 +3,9 @@ package roles
 import "database/sql"
 
 type Role struct {
-	ID            ID
-	Name          string
-	Abbr          Abbr
-	WolfCountType WolfCountType
+	ID   ID
+	Name string
+	Abbr Abbr
 }
 
 type Roles []Role
@@ -43,8 +42,26 @@ func NewFromAbbr(abbr Abbr) (Role, error) {
 	return Role{}, ErrorInvalidRoleAbbr
 }
 
-func (r Role) IsBitable() bool {
-	for _, v := range bitableRoles {
+func (r Role) WolfCountable() bool {
+	for _, v := range wolfCountables {
+		if v == r.ID {
+			return true
+		}
+	}
+	return false
+}
+
+func (r Role) Bitable() bool {
+	for _, v := range bitables {
+		if v == r.ID {
+			return true
+		}
+	}
+	return false
+}
+
+func (r Role) UncountableForJudge() bool {
+	for _, v := range uncountablesForJudge {
 		if v == r.ID {
 			return true
 		}

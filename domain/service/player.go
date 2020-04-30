@@ -67,7 +67,7 @@ func (s PlayerService) checkStateForWolf(
 ) (output.Interface, error) {
 	var otherWolfNames []string
 	for _, v := range game.Players {
-		if v.Role.WolfCountType.WolfCountable() && v.Name != player.Name {
+		if v.Role.WolfCountable() && v.Name != player.Name {
 			otherWolfNames = append(otherWolfNames, v.Name.String())
 		}
 	}
@@ -129,7 +129,7 @@ func (s PlayerService) Bite(
 		return output.PlayerBite{}, err
 	}
 
-	if !result.Actor.Role.IsBitable() {
+	if !result.Actor.Role.Bitable() {
 		return output.PlayerBite{}, ErrorRoleCommanndUnauthorized
 	}
 

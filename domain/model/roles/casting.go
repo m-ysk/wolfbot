@@ -56,7 +56,7 @@ func validateCasting(casting Casting) error {
 		}
 
 		total += num
-		if role.WolfCountType.WolfCountable() {
+		if role.WolfCountable() {
 			wolf += num
 		}
 	}
