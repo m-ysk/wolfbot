@@ -63,6 +63,7 @@ const (
 	actionFinishConfiguringRegulation action = "FinishConfiguringRegulation"
 	actionStartGame                   action = "GameStart"
 	actionFinishVoting                action = "FinishVoting"
+	actionFinishNighttime             action = "FinishNighttime"
 	actionConfirm                     action = "Confirm"
 	actionReject                      action = "Reject"
 )
@@ -85,6 +86,7 @@ var groupActionMap = map[string]action{
 	"設定終了":    actionFinishConfiguringRegulation,
 	"村開始":     actionStartGame,
 	"投票終了":    actionFinishVoting,
+	"夜明け":     actionFinishNighttime,
 	"はい":      actionConfirm,
 	"いいえ":     actionReject,
 }

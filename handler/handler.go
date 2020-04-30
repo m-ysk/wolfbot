@@ -70,6 +70,9 @@ func (h MessageHandler) HandleGroupMessage(
 	case actionFinishVoting:
 		return h.villageService.FinishVoting(villageID)
 
+	case actionFinishNighttime:
+		return h.villageService.FinishNighttime(villageID)
+
 	case actionConfirm:
 		return h.villageService.Confirm(villageID)
 

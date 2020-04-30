@@ -46,7 +46,7 @@ func (g *Game) ProceedToNighttime() {
 	}
 
 	for i, v := range g.Players {
-		v.Unacted()
+		v.Unact()
 		g.Players[i] = v
 	}
 

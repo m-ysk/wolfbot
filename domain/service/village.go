@@ -326,6 +326,34 @@ func (s VillageService) FinishVoting(
 	}, nil
 }
 
+func (s VillageService) FinishNighttime(
+	villageID model.VillageID,
+) (output.VillageFinishNighttime, error) {
+	game, err := s.gameRepository.FindByVillageID(villageID)
+	if err != nil {
+		return output.VillageFinishNighttime{}, err
+	}
+
+	if game.Village.Status != gamestatus.Nighttime {
+		return output.VillageFinishNighttime{}, ErrorCommandUnauthorized
+	}
+
+	if unacted := game.Players.FilterUnacted(); len(unacted) > 0 {
+		return output.VillageFinishNighttime{}, errorwr.New(
+			errors.New("unacted_player_exists"),
+			"まだ能力を実行していないプレイヤーが存在します。すべてのプレイヤーが能力を実行するまで次の日に進むことはできません",
+		)
+	}
+
+	game.Village.UpdateStatus(gamestatus.ConfirmingFinishNighttime)
+
+	if err := s.gameRepository.Update(game); err != nil {
+		return output.VillageFinishNighttime{}, err
+	}
+
+	return output.VillageFinishNighttime{}, nil
+}
+
 func (s VillageService) Confirm(
 	villageID model.VillageID,
 ) (output.Interface, error) {

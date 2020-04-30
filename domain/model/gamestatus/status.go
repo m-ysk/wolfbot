@@ -31,28 +31,33 @@ const (
 
 	// 夜
 	Nighttime GameStatus = "Nighttime"
+
+	// 夜を終了するか確認中
+	ConfirmingFinishNighttime GameStatus = "ConfirmingFinishNighttime"
 )
 
 var stringToStatus = map[string]GameStatus{
-	string(RecruitingPlayers):       RecruitingPlayers,
-	string(ConfiguringCasting):      ConfiguringCasting,
-	string(ConfirmingCasting):       ConfirmingCasting,
-	string(ConfiguringRegulation):   ConfiguringRegulation,
-	string(CheckingRole):            CheckingRole,
-	string(Daytime):                 Daytime,
-	string(ConfirmingFinishDaytime): ConfirmingFinishDaytime,
-	string(Nighttime):               Nighttime,
+	string(RecruitingPlayers):         RecruitingPlayers,
+	string(ConfiguringCasting):        ConfiguringCasting,
+	string(ConfirmingCasting):         ConfirmingCasting,
+	string(ConfiguringRegulation):     ConfiguringRegulation,
+	string(CheckingRole):              CheckingRole,
+	string(Daytime):                   Daytime,
+	string(ConfirmingFinishDaytime):   ConfirmingFinishDaytime,
+	string(Nighttime):                 Nighttime,
+	string(ConfirmingFinishNighttime): ConfirmingFinishNighttime,
 }
 
 var statusToStringForHuman = map[GameStatus]string{
-	RecruitingPlayers:       "参加者募集中",
-	ConfiguringCasting:      "配役設定中",
-	ConfirmingCasting:       "配役設定結果の確認中",
-	ConfiguringRegulation:   "ルール設定中",
-	CheckingRole:            "役職確認中",
-	Daytime:                 "昼（議論と投票）",
-	ConfirmingFinishDaytime: "昼の終了確認中",
-	Nighttime:               "夜（能力の実行）",
+	RecruitingPlayers:         "参加者募集中",
+	ConfiguringCasting:        "配役設定中",
+	ConfirmingCasting:         "配役設定結果の確認中",
+	ConfiguringRegulation:     "ルール設定中",
+	CheckingRole:              "役職確認中",
+	Daytime:                   "昼（議論と投票）",
+	ConfirmingFinishDaytime:   "昼の終了確認中",
+	Nighttime:                 "夜（能力の実行）",
+	ConfirmingFinishNighttime: "夜の終了確認中",
 }
 
 var (

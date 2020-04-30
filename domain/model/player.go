@@ -42,21 +42,29 @@ func NewPlayer(
 	}
 }
 
-func (p *Player) IsAlive() bool {
+func (p *Player) Alive() bool {
 	if p == nil {
 		return false
 	}
 	return p.LifeStatus == lifestatus.Alive
 }
 
-func (p *Player) Acted() {
+func (p *Player) Acted() bool {
+	if p == nil {
+		return false
+	}
+	return p.ActionStatus == actionstatus.Acted
+}
+
+func (p *Player) Act(to PlayerID) {
 	if p == nil {
 		return
 	}
 	p.ActionStatus = actionstatus.Acted
+	p.ActTo = to
 }
 
-func (p *Player) Unacted() {
+func (p *Player) Unact() {
 	if p == nil {
 		return
 	}
@@ -84,10 +92,19 @@ type Players []Player
 func (ps Players) Bite(target PlayerID) {
 	for i, v := range ps {
 		if v.Role.Bitable() {
-			ps[i].ActTo = target
-			ps[i].Acted()
+			ps[i].Act(target)
 		}
 	}
+}
+
+func (ps Players) FilterUnacted() Players {
+	var result Players
+	for _, v := range ps {
+		if !v.Acted() {
+			result = append(result, v)
+		}
+	}
+	return result
 }
 
 func (ps Players) FilterBitable() Players {

@@ -49,7 +49,7 @@ func (s PlayerService) checkState(
 ) (output.Interface, error) {
 	switch game.Village.Status {
 	case gamestatus.CheckingRole:
-		player.Acted()
+		player.Act("")
 		s.playerRepository.Update(player)
 
 		return output.PlayerCheckStateInCheckingRole{
@@ -74,7 +74,7 @@ func (s PlayerService) checkStateForWolf(
 
 	switch game.Village.Status {
 	case gamestatus.CheckingRole:
-		player.Acted()
+		player.Act("")
 		s.playerRepository.Update(player)
 
 		return output.PlayerCheckStateForWolf{
@@ -166,7 +166,7 @@ func (s PlayerService) validateRoleCommandWithTarget(
 	}
 
 	player, _ := game.Players.FindByID(playerID)
-	if !player.IsAlive() {
+	if !player.Alive() {
 		return validateRoleCommandWithTargetResult{}, ErrorDeadPlayerCommandUnauthorized
 	}
 

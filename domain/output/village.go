@@ -183,6 +183,22 @@ func (o VillageFinishVoting) Reply() string {
 	)
 }
 
+type VillageFinishNighttime struct{}
+
+func (o VillageFinishNighttime) Reply() string {
+	return `能力の実行が必要なすべてのプレイヤーが能力の実行を完了しています。
+
+本当に夜の時間を終了して次の日に進んでもよろしいですか？
+
+夜の時間を終了する場合は、
+＠はい
+
+キャンセルする場合は、
+＠いいえ
+
+と発言してください`
+}
+
 type VillageConfirmCasting struct{}
 
 func (o VillageConfirmCasting) Reply() string {
