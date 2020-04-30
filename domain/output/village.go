@@ -225,12 +225,12 @@ func (o VillageConfirmCasting) Reply() string {
 と入力してください。`
 }
 
-type VillageConfirmFinishVotingExecuted struct {
-	ExecutedPlayer model.PlayerName
-	VoteDetail     model.VoteDetail
+type VillageConfirmFinishVotingLynched struct {
+	LynchedPlayer model.PlayerName
+	VoteDetail    model.VoteDetail
 }
 
-func (o VillageConfirmFinishVotingExecuted) Reply() string {
+func (o VillageConfirmFinishVotingLynched) Reply() string {
 	return fmt.Sprintf(`投票の結果、%vさんが処刑されました。
 
 ○投票結果
@@ -247,7 +247,7 @@ func (o VillageConfirmFinishVotingExecuted) Reply() string {
 村で決めた時間になったら、【このグループ】にて、
 ＠夜明け
 と入力してください`,
-		o.ExecutedPlayer.String(),
+		o.LynchedPlayer.String(),
 		o.VoteDetail.StringForHuman(),
 	)
 }
@@ -275,9 +275,9 @@ func (o VillageConfirmFinishVotingRevoting) Reply() string {
 }
 
 type VillageConfirmFinishVotingJudged struct {
-	Judge          judge.Judge
-	ExecutedPlayer model.PlayerName
-	VoteDetail     model.VoteDetail
+	Judge         judge.Judge
+	LynchedPlayer model.PlayerName
+	VoteDetail    model.VoteDetail
 }
 
 func (o VillageConfirmFinishVotingJudged) Reply() string {
@@ -287,7 +287,7 @@ func (o VillageConfirmFinishVotingJudged) Reply() string {
 %v
 
 %v`,
-		o.ExecutedPlayer.String(),
+		o.LynchedPlayer.String(),
 		o.VoteDetail.StringForHuman(),
 		judgeResultMessage(o.Judge),
 	)

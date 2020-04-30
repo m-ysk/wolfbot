@@ -164,10 +164,10 @@ func (ps Players) CountRole(r roles.ID) int {
 	return count
 }
 
-func (ps Players) CountWolf() int {
+func (ps Players) CountAliveWolf() int {
 	count := 0
 	for _, v := range ps {
-		if v.Role.WolfCountable() {
+		if v.Role.WolfCountable() && v.Alive() {
 			count++
 		}
 	}

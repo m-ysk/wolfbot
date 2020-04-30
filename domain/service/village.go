@@ -299,7 +299,7 @@ func (s VillageService) StartGame(
 	}
 
 	return output.VillageStartGame{
-		WolfCount: game.Players.CountWolf(),
+		WolfCount: game.Players.CountAliveWolf(),
 	}, nil
 }
 
@@ -395,13 +395,13 @@ func (s VillageService) confirmFinishVoting(
 	}
 	result, err := game.Lynch(randomInt)
 	if err != nil {
-		return output.VillageConfirmFinishVotingExecuted{}, err
+		return nil, err
 	}
 
 	if result.Revoting {
 		game.Village.UpdateStatus(gamestatus.Daytime)
 		if err := s.gameRepository.Update(game); err != nil {
-			return output.VillageConfirmFinishVotingExecuted{}, err
+			return nil, err
 		}
 
 		return output.VillageConfirmFinishVotingRevoting{
@@ -411,25 +411,25 @@ func (s VillageService) confirmFinishVoting(
 
 	if judgeRes := game.Judge(); judgeRes != judge.Ongoing {
 		if err := s.villageRepository.Delete(game.Village.ID); err != nil {
-			return output.VillageConfirmFinishVotingJudged{}, err
+			return nil, err
 		}
 
 		return output.VillageConfirmFinishVotingJudged{
-			Judge:          judgeRes,
-			ExecutedPlayer: result.LynchedPlayer.Name,
-			VoteDetail:     game.VoteDetail(),
+			Judge:         judgeRes,
+			LynchedPlayer: result.LynchedPlayer.Name,
+			VoteDetail:    game.VoteDetail(),
 		}, nil
 	}
 
 	game.ProceedToNighttime()
 
 	if err := s.gameRepository.Update(game); err != nil {
-		return output.VillageConfirmFinishVotingExecuted{}, err
+		return nil, err
 	}
 
-	return output.VillageConfirmFinishVotingExecuted{
-		ExecutedPlayer: result.LynchedPlayer.Name,
-		VoteDetail:     game.VoteDetail(),
+	return output.VillageConfirmFinishVotingLynched{
+		LynchedPlayer: result.LynchedPlayer.Name,
+		VoteDetail:    game.VoteDetail(),
 	}, nil
 }
 

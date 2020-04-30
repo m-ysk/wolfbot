@@ -73,7 +73,7 @@ func (g *Game) Judge() judge.Judge {
 	}
 
 	aliveCountablePlayers := g.Players.CountAliveForJudge()
-	wolves := g.Players.CountWolf()
+	wolves := g.Players.CountAliveWolf()
 
 	if wolves == 0 {
 		return judge.Villagers
