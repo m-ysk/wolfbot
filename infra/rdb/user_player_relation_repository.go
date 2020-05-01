@@ -27,16 +27,6 @@ func (repo userPlayerRelationRepository) Create(relation model.UserPlayerRelatio
 	return nil
 }
 
-func (repo userPlayerRelationRepository) Delete(userID model.UserID, villageID model.VillageID) error {
-	if err := repo.db.Delete(&UserPlayerRelation{
-		UserID:    userID.NullString(),
-		VillageID: villageID.NullString(),
-	}).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
 func (repo userPlayerRelationRepository) FindByUserIDAndVillageID(
 	userID model.UserID,
 	villageID model.VillageID,

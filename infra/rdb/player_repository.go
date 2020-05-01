@@ -98,15 +98,6 @@ func (repo playerRepository) UpdateAll(players model.Players) error {
 	return nil
 }
 
-func (repo playerRepository) Delete(id model.PlayerID) error {
-	if err := repo.db.Delete(&Player{
-		ID: id.NullString(),
-	}).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
 func (repo playerRepository) FindByID(
 	id model.PlayerID,
 ) (model.Player, error) {
