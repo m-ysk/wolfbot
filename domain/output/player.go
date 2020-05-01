@@ -150,22 +150,22 @@ type PlayerCheckStateInNighttimeForDiviner struct {
 	Role    roles.Role
 	Divined bool
 	Target  model.PlayerName
-	Black   bool
+	IsWolf  bool
 }
 
 func (o PlayerCheckStateInNighttimeForDiviner) Reply() string {
 	var divineResult string
 	if o.Divined {
-		var blackOrWhite string
-		if o.Black {
-			blackOrWhite = "人狼"
+		var wolfOrHuman string
+		if o.IsWolf {
+			wolfOrHuman = "人狼"
 		} else {
-			blackOrWhite = "人狼ではありません"
+			wolfOrHuman = "人狼ではありません"
 		}
 		divineResult = fmt.Sprintf(
-			`あなたは「%v」さんを占い、結果は、【%v】でした`,
+			`あなたは「%v」さんを占い、結果は、%vでした`,
 			o.Target.String(),
-			blackOrWhite,
+			wolfOrHuman,
 		)
 	} else {
 		divineResult = `まだ本日の占いを実行していません。
@@ -211,5 +211,25 @@ func (o PlayerBite) Reply() string {
 （襲撃先プレイヤー名）＠噛む
 と入力してください`,
 		o.Target,
+	)
+}
+
+type PlayerDivine struct {
+	Target model.PlayerName
+	IsWolf bool
+}
+
+func (o PlayerDivine) Reply() string {
+	var result string
+	if o.IsWolf {
+		result = "人狼"
+	} else {
+		result = "人狼ではありません"
+	}
+
+	return fmt.Sprintf(
+		"占いの結果、「%v」さんは、%vでした。",
+		o.Target,
+		result,
 	)
 }

@@ -112,6 +112,16 @@ func (ps Players) Bite(target PlayerID) {
 	}
 }
 
+func (ps Players) FilterAlive() Players {
+	var result Players
+	for _, v := range ps {
+		if v.Alive() {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
 func (ps Players) FilterUnacted() Players {
 	var result Players
 	for _, v := range ps {

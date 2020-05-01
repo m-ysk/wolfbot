@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
@@ -8,6 +9,7 @@ import (
 	"wolfbot/domain/model/regulation"
 	"wolfbot/domain/model/roles"
 	"wolfbot/domain/output"
+	"wolfbot/lib/errorwr"
 )
 
 type PlayerService struct {
@@ -153,7 +155,7 @@ func (s PlayerService) checkStateForDiviner(
 				Role:    player.Role,
 				Divined: true,
 				Target:  target.Name,
-				Black:   target.Role.Black(),
+				IsWolf:  target.Role.Black(),
 			}, nil
 		}
 
@@ -161,7 +163,7 @@ func (s PlayerService) checkStateForDiviner(
 			Role:    player.Role,
 			Divined: false,
 			Target:  "",
-			Black:   false,
+			IsWolf:  false,
 		}, nil
 	}
 
@@ -229,6 +231,41 @@ func (s PlayerService) Bite(
 
 	return output.PlayerBite{
 		Target: result.Target.Name,
+	}, nil
+}
+
+func (s PlayerService) Divine(
+	playerID model.PlayerID,
+	villageID model.VillageID,
+	target string,
+) (output.PlayerDivine, error) {
+	validated, err := s.validateRoleCommandWithTarget(playerID, villageID, model.PlayerName(target))
+	if err != nil {
+		return output.PlayerDivine{}, err
+	}
+
+	player := validated.Actor
+
+	if player.Role.ID != roles.Diviner {
+		return output.PlayerDivine{}, ErrorRoleCommanndUnauthorized
+	}
+
+	if player.Acted() {
+		return output.PlayerDivine{}, errorwr.New(
+			errors.New("cannot repeat divine"),
+			"あなたは既に今晩の占いを実行しています。占い結果をもう一度確認する場合は、\n＠確認\nと入力してください",
+		)
+	}
+
+	player.Act(validated.Target.ID)
+
+	if err := s.playerRepository.Update(player); err != nil {
+		return output.PlayerDivine{}, err
+	}
+
+	return output.PlayerDivine{
+		Target: validated.Target.Name,
+		IsWolf: validated.Target.Role.Black(),
 	}, nil
 }
 

@@ -131,6 +131,9 @@ func (h MessageHandler) HandleUserMessage(
 
 	case actionBite:
 		return h.playerService.Bite(playerID, villageID, cmd.Target)
+
+	case actionDivine:
+		return h.playerService.Divine(playerID, villageID, cmd.Target)
 	}
 
 	panic("unreachable")
