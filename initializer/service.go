@@ -21,6 +21,7 @@ func InitService(infra Infra) Service {
 	playerService := service.NewPlayerService(
 		infra.PlayerRepository,
 		infra.GameRepository,
+		infra.RandomGenerator,
 	)
 
 	userPlayerRelationService := service.NewUserPlayerRelationService(

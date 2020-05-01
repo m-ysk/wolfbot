@@ -60,6 +60,24 @@ func (r Role) MustAct() bool {
 	return false
 }
 
+func (r Role) Black() bool {
+	for _, v := range blacks {
+		if v == r.ID {
+			return true
+		}
+	}
+	return false
+}
+
+func (r Role) ExcludedFromRandomWhite() bool {
+	for _, v := range excludedFromRandomWhite {
+		if v == r.ID {
+			return true
+		}
+	}
+	return false
+}
+
 func (r Role) Bitable() bool {
 	for _, v := range bitables {
 		if v == r.ID {

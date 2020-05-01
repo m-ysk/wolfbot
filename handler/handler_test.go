@@ -45,6 +45,7 @@ func InitMessageHandler() MessageHandler {
 	playerService := service.NewPlayerService(
 		playerRepo,
 		gameRepo,
+		randgen.RandomGeneratorMock{},
 	)
 
 	relationService := service.NewUserPlayerRelationService(

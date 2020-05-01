@@ -129,6 +129,63 @@ func (o PlayerCheckStateInNighttimeForWolf) Reply() string {
 	)
 }
 
+type PlayerCheckStateInCheckingRoleForDivinerRandomWhite struct {
+	Role      roles.Role
+	WhiteName model.PlayerName
+}
+
+func (o PlayerCheckStateInCheckingRoleForDivinerRandomWhite) Reply() string {
+	return fmt.Sprintf(`○あなたの役職
+%v
+
+○占い結果
+%vさんは人狼ではありません
+（妖狐が含まれる配役の場合、妖狐でもありません）`,
+		o.Role.Name,
+		o.WhiteName.String(),
+	)
+}
+
+type PlayerCheckStateInNighttimeForDiviner struct {
+	Role    roles.Role
+	Divined bool
+	Target  model.PlayerName
+	Black   bool
+}
+
+func (o PlayerCheckStateInNighttimeForDiviner) Reply() string {
+	var divineResult string
+	if o.Divined {
+		var blackOrWhite string
+		if o.Black {
+			blackOrWhite = "人狼"
+		} else {
+			blackOrWhite = "人狼ではありません"
+		}
+		divineResult = fmt.Sprintf(
+			`あなたは「%v」さんを占い、結果は、【%v】でした`,
+			o.Target.String(),
+			blackOrWhite,
+		)
+	} else {
+		divineResult = `まだ本日の占いを実行していません。
+占いを実行するには、このトーク内にて、
+
+（対象のプレイヤー名）＠占う
+
+と発言してください`
+	}
+
+	return fmt.Sprintf(`○あなたの役職
+%v
+
+○占い結果
+%v`,
+		o.Role.Name,
+		divineResult,
+	)
+}
+
 type PlayerVote struct {
 	Target model.PlayerName
 }

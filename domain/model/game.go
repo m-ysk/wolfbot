@@ -235,3 +235,36 @@ func (g *Game) ExecuteRoleAction() ExecuteRoleActionResult {
 		Victims: victims,
 	}
 }
+
+type RandomWhiteResult struct {
+	Diviner   Player
+	WhiteName PlayerName
+}
+
+func (g *Game) RandomWhite(
+	divinerID PlayerID,
+	// 0以上upper未満の整数をランダムで返す関数
+	randomInt func(upper int) int,
+) RandomWhiteResult {
+	if g == nil {
+		return RandomWhiteResult{}
+	}
+
+	diviner, _ := g.Players.FindByID(divinerID)
+
+	candidates := g.Players.FilterIncludedInRandomWhite().FilterNotByID(divinerID)
+	if len(candidates) == 0 {
+		return RandomWhiteResult{}
+	}
+
+	targetIdx := randomInt(len(candidates))
+	target := candidates[targetIdx]
+
+	diviner.Act(target.ID)
+	g.Players.UpdatePlayer(diviner)
+
+	return RandomWhiteResult{
+		Diviner:   diviner,
+		WhiteName: target.Name,
+	}
+}

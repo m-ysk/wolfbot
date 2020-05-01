@@ -10,6 +10,7 @@ const (
 	Unassigned ID = "Unassigned"
 	Villager   ID = "Villager"
 	Wolf       ID = "Wolf"
+	Diviner    ID = "Diviner"
 )
 
 var (

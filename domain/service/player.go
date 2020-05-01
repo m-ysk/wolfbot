@@ -1,9 +1,11 @@
 package service
 
 import (
+	"fmt"
 	"wolfbot/domain/interfaces"
 	"wolfbot/domain/model"
 	"wolfbot/domain/model/gamestatus"
+	"wolfbot/domain/model/regulation"
 	"wolfbot/domain/model/roles"
 	"wolfbot/domain/output"
 )
@@ -11,15 +13,18 @@ import (
 type PlayerService struct {
 	playerRepository interfaces.PlayerRepository
 	gameRepository   interfaces.GameRepository
+	randomGenerator  interfaces.RandomGenerator
 }
 
 func NewPlayerService(
 	playerRepository interfaces.PlayerRepository,
 	gameRepository interfaces.GameRepository,
+	randomGenerator interfaces.RandomGenerator,
 ) PlayerService {
 	return PlayerService{
 		playerRepository: playerRepository,
 		gameRepository:   gameRepository,
+		randomGenerator:  randomGenerator,
 	}
 }
 
@@ -51,6 +56,9 @@ func (s PlayerService) CheckState(
 	switch player.Role.ID {
 	case roles.Wolf:
 		return s.checkStateForWolf(game, player)
+
+	case roles.Diviner:
+		return s.checkStateForDiviner(game, player)
 
 	default:
 		return s.checkState(game, player)
@@ -104,10 +112,60 @@ func (s PlayerService) checkStateForWolf(
 			ActionStatus: player.ActionStatus,
 			ActTo:        target.Name,
 		}, nil
-
-	default:
-		return output.PlayerCheckState{}, nil
 	}
+
+	return nil, fmt.Errorf("unreachable in checkStateForWolf: %+v", game)
+}
+
+func (s PlayerService) checkStateForDiviner(
+	game model.Game,
+	player model.Player,
+) (output.Interface, error) {
+	switch game.Village.Status {
+	case gamestatus.CheckingRole:
+		switch game.Village.Regulation.FirstDayDivination {
+		case regulation.FirstDayDivinationRandomWhite:
+			if player.Acted() {
+				target, _ := game.Players.FindByID(player.ActTo)
+
+				return output.PlayerCheckStateInCheckingRoleForDivinerRandomWhite{
+					Role:      player.Role,
+					WhiteName: target.Name,
+				}, nil
+			}
+
+			result := game.RandomWhite(player.ID, s.randomGenerator.Intn)
+			if err := s.playerRepository.Update(result.Diviner); err != nil {
+				return nil, err
+			}
+
+			return output.PlayerCheckStateInCheckingRoleForDivinerRandomWhite{
+				Role:      player.Role,
+				WhiteName: result.WhiteName,
+			}, nil
+		}
+
+	case gamestatus.Nighttime:
+		if player.Acted() {
+			target, _ := game.Players.FindByID(player.ActTo)
+
+			return output.PlayerCheckStateInNighttimeForDiviner{
+				Role:    player.Role,
+				Divined: true,
+				Target:  target.Name,
+				Black:   target.Role.Black(),
+			}, nil
+		}
+
+		return output.PlayerCheckStateInNighttimeForDiviner{
+			Role:    player.Role,
+			Divined: false,
+			Target:  "",
+			Black:   false,
+		}, nil
+	}
+
+	return nil, fmt.Errorf("unreachable in checkStateForDiviner: %+v", game)
 }
 
 func (s PlayerService) Vote(

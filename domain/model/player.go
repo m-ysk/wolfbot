@@ -142,10 +142,30 @@ func (ps Players) FilterMustAct() Players {
 	return result
 }
 
+func (ps Players) FilterIncludedInRandomWhite() Players {
+	var result Players
+	for _, v := range ps {
+		if !v.Role.ExcludedFromRandomWhite() {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
 func (ps Players) FilterBitable() Players {
 	var result Players
 	for _, v := range ps {
 		if v.Role.Bitable() {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func (ps Players) FilterNotByID(id PlayerID) Players {
+	var result Players
+	for _, v := range ps {
+		if v.ID != id {
 			result = append(result, v)
 		}
 	}
