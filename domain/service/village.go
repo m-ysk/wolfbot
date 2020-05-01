@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"fmt"
-	"math/rand"
 	"strconv"
 	"time"
 	"wolfbot/domain/interfaces"
@@ -22,6 +21,7 @@ type VillageService struct {
 	userPlayerRelationRepository interfaces.UserPlayerRelationRepository
 	gameRepository               interfaces.GameRepository
 	uuidGenerator                interfaces.UUIDGenerator
+	randomGenerator              interfaces.RandomGenerator
 }
 
 func NewVillageService(
@@ -30,6 +30,7 @@ func NewVillageService(
 	userPlayerRelationRepository interfaces.UserPlayerRelationRepository,
 	gameRepository interfaces.GameRepository,
 	uuidGenerator interfaces.UUIDGenerator,
+	randomGenerator interfaces.RandomGenerator,
 ) VillageService {
 	return VillageService{
 		villageRepository:            villageRepository,
@@ -37,6 +38,7 @@ func NewVillageService(
 		userPlayerRelationRepository: userPlayerRelationRepository,
 		gameRepository:               gameRepository,
 		uuidGenerator:                uuidGenerator,
+		randomGenerator:              randomGenerator,
 	}
 }
 
@@ -260,7 +262,7 @@ func (s VillageService) FinishConfiguringRegulation(
 		return output.VillageFinishConfiguringRegulation{}, ErrorCommandUnauthorized
 	}
 
-	game.AssignRole()
+	game.AssignRole(s.randomGenerator.GenerateShuffledPermutation)
 	game.Village.UpdateStatus(gamestatus.CheckingRole)
 
 	if err := s.gameRepository.Update(game); err != nil {
@@ -390,10 +392,7 @@ func (s VillageService) confirmCasting(
 func (s VillageService) confirmFinishVoting(
 	game model.Game,
 ) (output.Interface, error) {
-	randomInt := func(n int) int {
-		return rand.Intn(n)
-	}
-	result, err := game.Lynch(randomInt)
+	result, err := game.Lynch(s.randomGenerator.Intn)
 	if err != nil {
 		return nil, err
 	}

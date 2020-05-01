@@ -15,6 +15,7 @@ func InitService(infra Infra) Service {
 		infra.UserPlayerRelationRepository,
 		infra.GameRepository,
 		infra.UUIDGenerator,
+		infra.RandomGenerator,
 	)
 
 	playerService := service.NewPlayerService(

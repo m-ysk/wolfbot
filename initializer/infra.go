@@ -2,6 +2,7 @@ package initializer
 
 import (
 	"wolfbot/domain/interfaces"
+	"wolfbot/infra/randgen"
 	"wolfbot/infra/rdb"
 	"wolfbot/infra/uuidgen"
 
@@ -14,6 +15,7 @@ type Infra struct {
 	UserPlayerRelationRepository interfaces.UserPlayerRelationRepository
 	GameRepository               interfaces.GameRepository
 	UUIDGenerator                interfaces.UUIDGenerator
+	RandomGenerator              interfaces.RandomGenerator
 }
 
 func InitInfra(db *gorm.DB) Infra {
@@ -23,6 +25,7 @@ func InitInfra(db *gorm.DB) Infra {
 	gameRepository := rdb.NewGameRepository(db)
 
 	uuidGenerator := uuidgen.NewUUIDGenerator()
+	randomGenerator := randgen.NewRandomGenerator()
 
 	return Infra{
 		VillageRepository:            villageRepository,
@@ -30,5 +33,6 @@ func InitInfra(db *gorm.DB) Infra {
 		UserPlayerRelationRepository: userPlayerRelationRepository,
 		GameRepository:               gameRepository,
 		UUIDGenerator:                uuidGenerator,
+		RandomGenerator:              randomGenerator,
 	}
 }

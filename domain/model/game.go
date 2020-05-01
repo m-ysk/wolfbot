@@ -7,7 +7,6 @@ import (
 	"wolfbot/domain/model/regulation"
 	"wolfbot/domain/model/roles"
 	"wolfbot/domain/model/votestatus"
-	"wolfbot/lib/randutil"
 )
 
 type Game struct {
@@ -15,14 +14,15 @@ type Game struct {
 	Players Players
 }
 
-func (g *Game) AssignRole() {
+// shuffledPermFunc は 0以上upper未満の整数をランダムに並べ替えた順列を返す関数
+func (g *Game) AssignRole(shuffledPermFunc func(upper int) []int) {
 	if g == nil {
 		return
 	}
 
 	roleIDs := g.Village.Casting.RoleIDs()
 
-	shuffledInts := randutil.GenerateShuffledPermutation(
+	shuffledInts := shuffledPermFunc(
 		len(g.Players),
 	)
 
