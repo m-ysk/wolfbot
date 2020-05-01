@@ -8,6 +8,11 @@ var wolfCountables = IDs{
 // 勝敗判定時にプレイヤー総数にカウントしない役職
 var uncountablesForJudge = IDs{}
 
+// 夜に能力を必ず実行しなければならない役職
+var mustActs = IDs{
+	Wolf,
+}
+
 // 「噛む」コマンドを実行できる役職
 var bitables = IDs{
 	Wolf,

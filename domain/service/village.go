@@ -340,7 +340,7 @@ func (s VillageService) FinishNighttime(
 		return output.VillageFinishNighttime{}, ErrorCommandUnauthorized
 	}
 
-	if unacted := game.Players.FilterUnacted(); len(unacted) > 0 {
+	if unacted := game.Players.FilterMustAct().FilterUnacted(); len(unacted) > 0 {
 		return output.VillageFinishNighttime{}, errorwr.New(
 			errors.New("unacted_player_exists"),
 			"まだ能力を実行していないプレイヤーが存在します。すべてのプレイヤーが能力を実行するまで次の日に進むことはできません",

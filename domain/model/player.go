@@ -132,6 +132,16 @@ func (ps Players) FilterUnvoted() Players {
 	return result
 }
 
+func (ps Players) FilterMustAct() Players {
+	var result Players
+	for _, v := range ps {
+		if v.Role.MustAct() {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
 func (ps Players) FilterBitable() Players {
 	var result Players
 	for _, v := range ps {

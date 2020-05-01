@@ -51,6 +51,15 @@ func (r Role) WolfCountable() bool {
 	return false
 }
 
+func (r Role) MustAct() bool {
+	for _, v := range mustActs {
+		if v == r.ID {
+			return true
+		}
+	}
+	return false
+}
+
 func (r Role) Bitable() bool {
 	for _, v := range bitables {
 		if v == r.ID {
