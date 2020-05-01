@@ -112,7 +112,7 @@ func (o PlayerCheckStateInNighttimeForWolf) Reply() string {
 	} else {
 		bite = fmt.Sprintf(`%v
 
-※襲撃機を変更する場合、このトークにて
+※襲撃先を変更する場合、このトークにて
 （襲撃先プレイヤー名）＠噛む
 と発言して襲撃先を指定してください。`,
 			o.ActTo,
@@ -139,8 +139,7 @@ func (o PlayerCheckStateInCheckingRoleForDivinerRandomWhite) Reply() string {
 %v
 
 ○占い結果
-%vさんは人狼ではありません
-（妖狐が含まれる配役の場合、妖狐でもありません）`,
+%vさんは人狼ではありません`,
 		o.Role.Name,
 		o.WhiteName.String(),
 	)
